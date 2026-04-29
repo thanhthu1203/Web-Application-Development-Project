@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Forum HCMIU</title>
+
+  <link rel="stylesheet" href="../frontend/css/index.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-logo">
+      <span class="logo-icon">◈</span>
+      <span class="logo-text">Forum HCMIU</span>
+    </div>
+    <p class="login-sub">Select an account to view the interface according to each role</p>
+    <div class="account-list" id="accountList"></div>
+    <button class="btn-login" onclick="doLogin()">Login</button>
+    <p class="hint-text">Admin / Moderator / User will see different UI</p>
+  </div>
+</div>
+
+<!-- FORUM -->
+<div id="forumScreen">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo-icon small">◈</span>
+      <span class="topbar-title">Forum HCMIU</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="chip-avatar" id="chipAvatar"></div>
+        <span id="chipName"></span>
+        <span class="role-tag" id="chipRole"></span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="forum-body">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+    </aside>
+    <main class="main-content" id="mainContent"></main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- JS -->
+<script src="../frontend/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+/* ─────────────────────────────────────────
+   login.css  –  style riêng cho trang đăng nhập
+   (import sau shared.css)
+   ───────────────────────────────────────── */
+
+/* label row: label bên trái, "quên mật khẩu" bên phải */
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+/* link quên mật khẩu */
+.forgot-link {
+  font-size: 0.82rem;
+  color: var(--purple);
+  text-decoration: none;
+  font-weight: 500;
+}
+.forgot-link:hover { text-decoration: underline; }
+
+/* checkbox "ghi nhớ đăng nhập" */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.check-row input[type="checkbox"] {
+  accent-color: var(--purple);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.check-row label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+/* ── Error banner từ server ── */
+.error-banner {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fff5f5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+  color: var(--red);
+  font-weight: 500;
+  animation: shake 0.35s ease;
+}
+
+.error-banner.visible {
+  display: flex;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-4px); }
+  75%       { transform: translateX(4px); }
+}

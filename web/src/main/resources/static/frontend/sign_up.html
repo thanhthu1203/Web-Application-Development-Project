@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ForumHub — Sign Up</title>
+  <link rel="stylesheet" href="../frontend/css/shared.css"/>
+  <link rel="stylesheet" href="../frontend/css/signup.css"/>
+</head>
+<body>
+
+  <!-- main content -->
+  <main class="main">
+    <div class="auth-wrap">
+
+      <div class="auth-header">
+        <h1>Create a new account</h1>
+        <p>Join the ForumHub community today</p>
+      </div>
+
+      <div class="auth-card">
+
+        <form id="signupForm" novalidate>
+
+          <!-- chọn ảnh đại diện -->
+          <div class="avatar-section">
+            <label>Profile Picture</label>
+            <div class="avatar-row">
+              <div class="avatar-preview" id="avatarPreview">
+                <span id="avatarEmoji">😊</span>
+              </div>
+              <div>
+                <input type="file" id="avatarInput" accept="image/*" style="display: none"/>
+                <button type="button" class="avatar-btn"
+                  onclick="document.getElementById('avatarInput').click()">
+                  Upload Image
+                </button>
+                <div class="avatar-hint">JPG, PNG — max 2MB</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- họ tên -->
+          <div class="name-row">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <div class="input-wrap">
+                <span class="input-icon">✏️</span>
+                <input type="text" id="firstName" placeholder="John"/>
+              </div>
+              <div class="error-msg" id="firstNameErr">Please enter your first name.</div>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <div class="input-wrap">
+                <span class="input-icon">✏️</span>
+                <input type="text" id="lastName" placeholder="Doe"/>
+              </div>
+              <div class="error-msg" id="lastNameErr">Please enter your last name.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-wrap">
+              <span class="input-icon">@</span>
+              <input type="text" id="username" placeholder="nguyen_dev" autocomplete="username"/>
+            </div>
+            <div class="error-msg" id="usernameErr">
+              Please enter a username (no spaces or special characters).
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉️</span>
+              <input type="email" id="email" placeholder="nguyen@example.com" autocomplete="email"/>
+            </div>
+            <div class="error-msg" id="emailErr">Please enter a valid email address.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔑</span>
+              <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password"/>
+              <button type="button" class="toggle-pw" id="togglePw">👁</button>
+            </div>
+            <!-- thanh đo độ mạnh -->
+            <div class="strength-bar">
+              <div class="strength-seg" id="s1"></div>
+              <div class="strength-seg" id="s2"></div>
+              <div class="strength-seg" id="s3"></div>
+              <div class="strength-seg" id="s4"></div>
+            </div>
+            <div class="strength-label" id="strengthLabel"></div>
+            <div class="error-msg" id="pwErr">Password must be at least 8 characters.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPw">Confirm Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔑</span>
+              <input type="password" id="confirmPw" placeholder="Re-enter password" autocomplete="new-password"/>
+              <button type="button" class="toggle-pw" id="toggleConfirm">👁</button>
+            </div>
+            <div class="error-msg" id="confirmErr">Passwords do not match.</div>
+          </div>
+
+          <!-- điều khoản -->
+          <div class="terms-row">
+            <input type="checkbox" id="terms"/>
+            <label for="terms">
+              I agree to the
+              <a href="#">Terms of Service</a> and
+              <a href="#">Privacy Policy</a> of ForumHub.
+            </label>
+          </div>
+          <div class="error-msg" id="termsErr">Please agree to the terms and conditions.</div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">Create Account</button>
+        </form>
+
+        <div class="redirect">
+          Already have an account? <a href="login.html">Log in</a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- toast thông báo -->
+  <div class="toast" id="toast">✓ Registration successful! Welcome aboard.</div>
+
+  <script src="../frontend/js/sign_up.js"></script>
+</body>
+</html>

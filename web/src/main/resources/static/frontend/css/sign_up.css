@@ -1,0 +1,160 @@
+/* ─────────────────────────────────────────
+   signup.css  –  style riêng cho trang đăng ký
+   (import sau shared.css)
+   ───────────────────────────────────────── */
+
+/* auth-wrap rộng hơn một chút so với login vì có nhiều trường */
+.auth-wrap { max-width: 460px; }
+
+/* ── 2 cột tên / họ ── */
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── khu vực chọn ảnh đại diện ── */
+.avatar-section { margin-bottom: 20px; }
+.avatar-section > label { margin-bottom: 10px; }
+
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar-preview {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--purple-light);
+  background: var(--purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-btn {
+  padding: 8px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.avatar-btn:hover { border-color: var(--purple); background: var(--purple-light); }
+
+.avatar-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+/* ── thanh đo độ mạnh mật khẩu ── */
+.strength-bar {
+  margin-top: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.strength-seg {
+  height: 4px;
+  flex: 1;
+  border-radius: 4px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+
+.strength-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
+  text-align: right;
+  min-height: 1em;
+}
+
+/* ── checkbox điều khoản ── */
+.terms-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.terms-row input[type="checkbox"] {
+  accent-color: var(--purple);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.terms-row label {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 400;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.terms-row label a {
+  color: var(--purple);
+  font-weight: 600;
+  text-decoration: none;
+}
+.terms-row label a:hover { text-decoration: underline; }
+
+/* lỗi điều khoản (nằm dưới .terms-row) */
+#termsErr {
+  margin-top: -14px;
+  margin-bottom: 14px;
+}
+
+/* ── toast thông báo thành công ── */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--green);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(34, 197, 94, 0.35);
+  display: none;
+  align-items: center;
+  gap: 8px;
+  z-index: 999;
+  animation: toastIn 0.3s ease;
+}
+
+.toast.show { display: flex; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── responsive bổ sung cho signup ── */
+@media (max-width: 520px) {
+  .name-row { grid-template-columns: 1fr; }
+  .auth-card { padding: 28px 20px; }
+  .social-row { grid-template-columns: 1fr; }
+  .auth-header h1 { font-size: 1.5rem; }
+}
