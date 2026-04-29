@@ -1,5 +1,6 @@
 const express = require("express");
 const cors    = require("cors");
+const bcrypt  = require("bcrypt");
 const db      = require("./db");
 
 const app = express();
@@ -17,18 +18,23 @@ app.post("/login", (req, res) => {
   if (!email || !password)
     return res.status(400).json({ message: "Email và mật khẩu không được để trống." });
 
-  // Tìm account theo email + password thẳng
+  // Bước 1: tìm account theo email (KHÔNG lọc password ở SQL)
   db.query(
-    "SELECT * FROM Accounts WHERE email = ? AND password = ? LIMIT 1",
-    [email, password],
-    (err, accounts) => {
+    "SELECT * FROM Accounts WHERE email = ? LIMIT 1",
+    [email],
+    async (err, accounts) => {
       if (err) return res.status(500).send(err);
       if (accounts.length === 0)
         return res.status(401).json({ message: "Email hoặc mật khẩu không đúng." });
 
+      // Bước 2: so sánh password bằng bcrypt
+      const match = await bcrypt.compare(password, accounts[0].password);
+      if (!match)
+        return res.status(401).json({ message: "Email hoặc mật khẩu không đúng." });
+
       const id = accounts[0].account_id;
 
-      // Xác định role: Admin > Mod > User
+      // Bước 3: xác định role Admin > Mod > User
       db.query("SELECT * FROM Admins WHERE admin_id = ? LIMIT 1", [id], (err2, admins) => {
         if (err2) return res.status(500).send(err2);
         if (admins.length > 0)
@@ -46,7 +52,9 @@ app.post("/login", (req, res) => {
             if (users[0].is_banned)
               return res.status(403).json({ message: "Tài khoản của bạn đã bị ban." });
 
-            return res.json({ ...users[0], account_id: id, email, role: 'user' });
+            const user = users[0];
+            delete user.password;
+            return res.json({ ...user, account_id: id, email, role: 'user' });
           });
         });
       });
@@ -57,12 +65,15 @@ app.post("/login", (req, res) => {
 // =======================
 // AUTH — SIGN UP
 // =======================
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
   const { email, password, first_name, last_name } = req.body;
   if (!email || !password || !first_name || !last_name)
     return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin." });
 
-  db.query("INSERT INTO Accounts (email, password) VALUES (?, ?)", [email, password], (err, result) => {
+  // Hash password trước khi lưu vào DB
+  const hashed = await bcrypt.hash(password, 10);
+
+  db.query("INSERT INTO Accounts (email, password) VALUES (?, ?)", [email, hashed], (err, result) => {
     if (err) {
       if (err.code === "ER_DUP_ENTRY")
         return res.status(409).json({ message: "Email đã tồn tại." });
@@ -231,7 +242,7 @@ app.put("/messages/:id", (req, res) => {
 
       // Ghi lịch sử chỉnh sửa
       db.query(
-        "INSERT INTO modifying (mod_id, message_id, modified_at) VALUES (?, ?, NOW())",
+        "INSERT INTO Modifying (mod_id, message_id, modify_date) VALUES (?, ?, NOW())",
         [mod_id || null, req.params.id],
         (err2) => {
           if (err2) console.error(err2);
