@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile — Admin Portal — Forum HCMIU</title>
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+<div id="forumScreen" class="forum-layout" style="display: flex;">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo-icon small">◈</span>
+      <span class="topbar-title">Forum HCMIU - Admin Control Panel</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="chip-avatar admin" id="chipAvatar"></div>
+        <span id="chipName"></span>
+        <span class="role-tag admin" id="chipRole">Admin</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="forum-body">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-label">Admin Menu</div>
+        <div class="nav-item" data-tab="system-settings" onclick="window.location.href='system_settings.html'">
+          <span class="nav-icon">⚙</span>System Settings
+        </div>
+        <div class="nav-item" data-tab="manage-mods" onclick="window.location.href='manage_mods.html'">
+          <span class="nav-icon">◈</span>Manage Mods
+        </div>
+        <div class="nav-item active" data-tab="profile" onclick="window.location.href='admin_profile.html'">
+          <span class="nav-icon">👤</span>Profile
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+      <div id="page-profile" class="page-section">
+        <div class="page-title">Profile</div>
+        <div class="page-desc">Your account information</div>
+        <div class="perm-banner admin">ℹ️ You are <strong>Admin</strong> — Manage Moderators and System Settings.</div>
+        <div class="card" style="max-width:520px">
+          <div class="card-title">Profile Information</div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>First Name</label>
+            <input id="pf-first" placeholder="First Name" class="compose-input" style="width: 100%;">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Last Name</label>
+            <input id="pf-last" placeholder="Last Name" class="compose-input" style="width: 100%;">
+          </div>
+          <div class="form-group">
+            <label for="pf-email">Email Address</label>
+            <input 
+              type="email" 
+              id="pf-email" 
+              class="compose-input" 
+              style="width: 100%;"
+              placeholder="Loading..."
+            />
+            <small class="form-text text-muted">Email cannot be changed</small>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Gender</label>
+            <select id="pf-gender" class="compose-input" style="width: 100%;">
+              <option value="">-- Select --</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label>Date of Birth</label>
+            <input type="date" id="pf-dob" class="compose-input" style="width: 100%;">
+          </div>
+          <button class="btn success" onclick="saveProfile()">Save Changes</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="tpl-empty">
+  <div class="empty-state">
+    <div class="empty-icon"></div>
+    <div class="empty-text"></div>
+  </div>
+</template>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/common.js"></script>
+<script src="../js/page_router.js"></script>
+<script>window.__ACTIVE_TAB__ = 'profile';</script>
+<script src="../admin/js/admin_profile.js"></script>
+</body>
+</html>

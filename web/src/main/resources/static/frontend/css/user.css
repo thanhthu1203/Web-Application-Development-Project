@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg:           #f4f5f9;
+  --bg-card:      #ffffff;
+  --bg-hover:     #f0f0f8;
+  --bg-input:     #f4f5f9;
+  --border:       #e5e7ef;
+  --border-hi:    #c7c9e0;
+  --text:         #1a1a2e;
+  --text-muted:   #6b7280;
+  --text-dim:     #b0b3c6;
+
+  --primary:      #7c3aed;
+  --primary-light:#ede9fe;
+  --primary-text: #7c3aed;
+
+  /* Theme riêng của User */
+  --user-bg:      #dbeafe; 
+  --user-text:    #1d4ed8; 
+  --user-border:  #93c5fd;
+
+  --danger:       #ef4444; --danger-bg:  #fee2e2;
+  --success:      #10b981; --warn:       #f59e0b;
+
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+  --transition: 0.18s ease;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   FORUM LAYOUT
+============================================================ */
+.forum-layout { display: flex; flex-direction: column; height: 100vh; }
+
+.topbar {
+  height: 56px; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card); flex-shrink: 0;
+}
+.topbar-left, .topbar-right { display: flex; align-items: center; gap: 10px; }
+.topbar-title { font-size: 16px; font-weight: 700; color: var(--text); }
+.logo-icon { color: var(--primary); font-size: 16px; }
+
+.user-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px 5px 5px; border-radius: 99px;
+  border: 1.5px solid var(--border); background: var(--bg);
+}
+
+.chip-avatar.user { 
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  background: var(--user-bg); color: var(--user-text); border: 1.5px solid var(--user-border); 
+}
+
+#chipName { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.role-tag.user {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 99px; 
+  color: var(--user-text); border: 1.5px solid var(--user-border); background: var(--user-bg); 
+}
+
+.btn-logout {
+  font-size: 12px; padding: 6px 14px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--text-muted); cursor: pointer; font-weight: 500;
+  transition: all var(--transition);
+}
+.btn-logout:hover { color: var(--danger); border-color: #fca5a5; background: var(--danger-bg); }
+
+.forum-body { display: flex; flex: 1; overflow: hidden; }
+
+.sidebar {
+  width: 210px; flex-shrink: 0; border-right: 1px solid var(--border);
+  background: var(--bg-card); padding: 1.25rem 0.875rem; overflow-y: auto;
+}
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+
+.sidebar-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding: 10px 10px 4px; margin-top: 8px;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 9px; padding: 8px 10px;
+  border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;
+  color: var(--text-muted); border: 1.5px solid transparent;
+  transition: all var(--transition); font-weight: 500;
+}
+.nav-item:hover { background: var(--bg-hover); color: var(--text); }
+.nav-item.active { background: var(--primary-light); color: var(--primary-text); border-color: transparent; }
+
+.nav-icon { font-size: 14px; width: 18px; text-align: center; }
+.main-content { flex: 1; overflow-y: auto; padding: 1.75rem 2rem; background: var(--bg); }
+
+/* ============================================================
+   COMPONENTS (Chỉ giữ lại những thẻ User cần)
+============================================================ */
+.page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+.page-desc  { font-size: 13px; color: var(--text-muted); margin-bottom: 1.25rem; }
+
+.perm-banner.user {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 11px 16px; border-radius: var(--radius-md); border: 1.5px solid var(--user-border);
+  font-size: 13px; margin-bottom: 1.25rem; font-weight: 500;
+  background: var(--primary-light); color: var(--primary-text); 
+}
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+}
+.card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.875rem; }
+
+.thread-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; border-radius: var(--radius-md);
+  border: 1px solid var(--border); background: var(--bg-card);
+  margin-bottom: 8px; transition: border-color var(--transition);
+}
+.thread-item:hover { border-color: var(--primary); }
+
+.thread-icon-box {
+  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  background: var(--bg); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.thread-info { flex: 1; min-width: 0; }
+.thread-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--text); }
+.thread-meta { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+.meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text-dim); display: inline-block; }
+
+.tag-locked { font-size: 10px; padding: 2px 7px; border-radius: 99px; background: var(--danger-bg); color: var(--danger); border: 1px solid #fca5a5; font-weight: 600; }
+.tag-open   { font-size: 10px; padding: 2px 7px; border-radius: 99px; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; font-weight: 600; }
+
+.btn {
+  font-size: 12px; padding: 6px 12px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border); background: var(--bg);
+  color: var(--text-muted); cursor: pointer; transition: all var(--transition); font-weight: 600;
+}
+.btn:hover { color: var(--text); border-color: var(--border-hi); background: var(--bg-hover); }
+.btn.danger { color: var(--danger); border-color: #fca5a5; background: var(--danger-bg); }
+.btn.success { color: var(--success); border-color: #6ee7b7; background: #d1fae5; }
+
+.compose-box { display: flex; gap: 8px; align-items: center; margin-top: 0.75rem; }
+.compose-input {
+  flex: 1; padding: 10px 14px; background: var(--bg-input);
+  border: 1.5px solid var(--border); border-radius: var(--radius-md); font-size: 13px; outline: none;
+}
+.compose-input:focus { border-color: var(--primary); }
+
+select {
+  width: 100%; padding: 9px 12px; margin-bottom: 8px;
+  background: var(--bg-input); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 13px; outline: none;
+}
+
+.notif-item { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); margin-top: 5px; }
+.notif-dot.read { background: var(--text-dim); }
+.notif-text { font-size: 13px; font-weight: 500; }
+.notif-time { font-size: 11px; color: var(--text-muted); }
+
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-dim); font-size: 13px; }
+.empty-icon  { font-size: 32px; margin-bottom: 10px; }
+
+/* Profile form */
+.form-group { margin-bottom: 1rem; }
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  outline: none;
+  background: var(--bg-input);
+  transition: border-color var(--transition);
+  margin-bottom: 0;
+}
+.form-group input:focus,
+.form-group select:focus { border-color: var(--primary); }
+.form-group small { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block; }
+
+/* Sửa lỗi ô Email có màu khác do readonly hoặc autofill */
+input[readonly], 
+input:disabled {
+    background-color: #ffffff !important; /* Hoặc màu nền cụ thể bạn đang dùng */
+    color: var(--text) !important;       /* Đảm bảo màu chữ giống các ô khác */
+    cursor: not-allowed;
+    border: 1px solid var(--border);    /* Giữ nguyên border để đồng bộ */
+}
+
+/* Xử lý màu nền khó chịu khi trình duyệt tự động điền (Autofill) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    -webkit-text-fill-color: var(--text) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
+  background: var(--text); border-radius: var(--radius-lg); padding: 10px 20px; font-size: 12px; color: #fff;
+  opacity: 0; transition: 0.2s; pointer-events: none; z-index: 999; font-weight: 600;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }

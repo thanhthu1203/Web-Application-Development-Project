@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Threads — Forum HCMIU</title>
+  <link rel="stylesheet" href="../css/user.css"/>
+</head>
+<body>
+
+<div id="forumScreen" class="forum-layout">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo-icon small">◈</span>
+      <span class="topbar-title">Forum HCMIU</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="chip-avatar user" id="chipAvatar"></div>
+        <span id="chipName"></span>
+        <span class="role-tag user" id="chipRole">User</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="forum-body">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-label">User Menu</div>
+        <div class="nav-item active" data-tab="threads" onclick="window.location.href='user_threads.html'">
+          <span class="nav-icon">◫</span>Threads
+        </div>
+        <div class="nav-item" data-tab="messages" onclick="window.location.href='user_messages.html'">
+          <span class="nav-icon">✉</span>Messages
+        </div>
+        <div class="nav-item" data-tab="notifications" onclick="window.location.href='user_notifications.html'">
+          <span class="nav-icon">◎</span>Notifications
+        </div>
+        <div class="nav-item" data-tab="subscribes" onclick="window.location.href='user_subscribes.html'">
+          <span class="nav-icon">★</span>Subscriptions
+        </div>
+        <div class="nav-item" data-tab="profile" onclick="window.location.href='user_profile.html'">
+          <span class="nav-icon">👤</span>Profile
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+      <div id="page-threads" class="page-section">
+        <div class="page-title">Threads</div>
+        <div class="page-desc">List of discussion threads</div>
+        <div class="perm-banner user">ℹ️ You are <strong>User</strong> — read posts, create posts, subscribe to threads.</div>
+        <div id="threadsList"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="tpl-thread">
+  <div class="thread-item">
+    <div class="thread-icon-box">💬</div>
+    <div class="thread-info">
+      <div class="thread-title"></div>
+      <div class="thread-meta">
+        <span class="meta-cat"></span>
+        <span class="meta-dot"></span>
+        <span class="meta-posts"></span>
+        <span class="meta-dot"></span>
+        <span class="meta-status"></span>
+      </div>
+    </div>
+    <div class="thread-actions">
+      <button class="btn btn-action"></button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-empty">
+  <div class="empty-state">
+    <div class="empty-icon"></div>
+    <div class="empty-text"></div>
+  </div>
+</template>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/common.js"></script>
+<script src="../js/page_router.js"></script>
+<script>window.__ACTIVE_TAB__ = 'threads';</script>
+<script src="../user/js/user_threads.js"></script>
+</body>
+</html>

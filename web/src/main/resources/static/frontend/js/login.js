@@ -1,121 +1,71 @@
-/* ─────────────────────────────────────────
-   login.js  –  logic cho trang đăng nhập
-   Gọi POST /login thật thay vì alert() demo
-   ─────────────────────────────────────────  */
-
 const API = 'http://localhost:3000';
 
-/* ── Toggle hiện / ẩn mật khẩu ── */
-const togglePwBtn = document.getElementById('togglePw');
-const pwInput     = document.getElementById('password');
-
-togglePwBtn.addEventListener('click', () => {
-  const isHidden = pwInput.type === 'password';
-  pwInput.type            = isHidden ? 'text' : 'password';
-  togglePwBtn.textContent = isHidden ? '🙈' : '👁';
-});
-
-/* ── Helpers validation ── */
+/* -- Helpers -- */
 function showError(inputId, errId) {
   document.getElementById(inputId).classList.add('invalid');
   document.getElementById(errId).style.display = 'block';
 }
-
 function clearError(inputId, errId) {
   document.getElementById(inputId).classList.remove('invalid');
   document.getElementById(errId).style.display = 'none';
 }
 
-/* Xóa lỗi ngay khi người dùng bắt đầu gõ lại */
-const fieldErrMap = {
-  email:    'emailErr',
-  password: 'pwErr',
-};
-
-Object.keys(fieldErrMap).forEach(id => {
-  document.getElementById(id).addEventListener('input', () => {
-    clearError(id, fieldErrMap[id]);
-    hideBanner();
-  });
-});
-
-/* ── Error banner từ server ── */
-function showBanner(msg) {
-  const banner = document.getElementById('errorBanner');
-  document.getElementById('errorMsg').textContent = msg;
-  banner.classList.remove('visible');
-  void banner.offsetWidth; // reset animation
-  banner.classList.add('visible');
-}
-
-function hideBanner() {
-  document.getElementById('errorBanner').classList.remove('visible');
-}
-
-/* ── Xử lý submit form ── */
-document.getElementById('loginForm').addEventListener('submit', async function (e) {
+/* -- Login Logic -- */
+document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const remember = document.getElementById('remember')?.checked;
 
-  const emailVal = document.getElementById('email').value.trim();
-  const pwVal    = document.getElementById('password').value;
-  const remember = document.getElementById('remember').checked;
-  let valid = true;
+  if (!email) return showError('email', 'emailErr');
+  if (!password) return showError('password', 'pwErr');
 
-  // Validate phía client trước
-  if (!emailVal) { showError('email', 'emailErr'); valid = false; }
-  else            { clearError('email', 'emailErr'); }
-
-  if (!pwVal)    { showError('password', 'pwErr'); valid = false; }
-  else            { clearError('password', 'pwErr'); }
-
-  if (!valid) return;
-
-  // Loading state
-  const btn = document.getElementById('submitBtn');
+  const btn = e.target.querySelector('button');
   btn.textContent = 'Logging in...';
-  btn.disabled    = true;
+  btn.disabled = true;
 
   try {
     const res = await fetch(`${API}/login`, {
-      method:  'POST',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email: emailVal, password: pwVal }),
+      body: JSON.stringify({ email, password }),
     });
-
     const data = await res.json();
 
     if (!res.ok) {
-      // Sai email / mật khẩu hoặc bị ban
-      showBanner(data.message || 'Incorrect email or password.');
-      showError('email', 'emailErr');
-      showError('password', 'pwErr');
+      document.getElementById('errorBanner').style.display = 'block';
+      document.getElementById('errorMsg').textContent = data.message;
       btn.textContent = 'Login';
-      btn.disabled    = false;
+      btn.disabled = false;
       return;
     }
 
-    // Đăng nhập thành công — lưu session
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem('currentUser', JSON.stringify(data));
 
-    // Redirect về trang chính
-    window.location.href = 'index.html';
+    // ĐIỀU HƯỚNG ĐÚNG ĐẾN CÁC FILE ĐÃ TÁCH
+    if (data.role === 'admin') {
+      window.location.href = 'admin/system_settings.html';
+    } else if (data.role === 'moderator') {
+      window.location.href = 'mod/mod_threads.html';
+    } else {
+      window.location.href = 'user/user_threads.html';
+    }
 
   } catch (err) {
-    // Không kết nối được server
-    showBanner('Cannot connect to server. Please try again.');
+    alert('Cannot connect to server.');
     btn.textContent = 'Login';
-    btn.disabled    = false;
+    btn.disabled = false;
   }
 });
 
-/* ── Đăng nhập bằng mạng xã hội (chưa triển khai) ── */
-function socialLogin(provider) {
-  showBanner(`${provider} login is not yet available.`);
-}
-
-/* ── Nếu đã login rồi thì redirect luôn ── */
+// Check session nếu đã login thì vào thẳng
 (function checkSession() {
-  const user = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
-  if (user) window.location.href = 'index.html';
+  const userStr = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+  if (userStr) {
+    const user = JSON.parse(userStr);
+    if (user.role === 'admin') window.location.href = 'admin/system_settings.html';
+    else if (user.role === 'moderator') window.location.href = 'mod/mod_threads.html';
+    else window.location.href = 'user/user_threads.html';
+  }
 })();

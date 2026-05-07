@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile — Forum HCMIU</title>
+  <link rel="stylesheet" href="../css/user.css"/>
+</head>
+<body>
+
+<div id="forumScreen" class="forum-layout">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo-icon small">◈</span>
+      <span class="topbar-title">Forum HCMIU</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="chip-avatar user" id="chipAvatar"></div>
+        <span id="chipName"></span>
+        <span class="role-tag user" id="chipRole">User</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="forum-body">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-label">User Menu</div>
+        <div class="nav-item" data-tab="threads" onclick="window.location.href='user_threads.html'">
+          <span class="nav-icon">◫</span>Threads
+        </div>
+        <div class="nav-item" data-tab="messages" onclick="window.location.href='user_messages.html'">
+          <span class="nav-icon">✉</span>Messages
+        </div>
+        <div class="nav-item" data-tab="notifications" onclick="window.location.href='user_notifications.html'">
+          <span class="nav-icon">◎</span>Notifications
+        </div>
+        <div class="nav-item" data-tab="subscribes" onclick="window.location.href='user_subscribes.html'">
+          <span class="nav-icon">★</span>Subscriptions
+        </div>
+        <div class="nav-item active" data-tab="profile" onclick="window.location.href='user_profile.html'">
+          <span class="nav-icon">👤</span>Profile
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+      <div id="page-profile" class="page-section">
+        <div class="page-title">Profile</div>
+        <div class="page-desc">Your account information</div>
+        <div class="perm-banner user">ℹ️ You are <strong>User</strong> — read posts, create posts, subscribe to threads.</div>
+        <div class="card" style="max-width:520px">
+          <div class="card-title">Profile Information</div>
+          <div class="form-group">
+            <label>First Name</label>
+            <input id="pf-first" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input id="pf-last" placeholder="Last Name">
+          </div>
+          <div class="form-group">
+            <label for="pf-email">Email Address</label>
+            <input 
+              type="email" 
+              id="pf-email" class="compose-input" 
+              style="background-color: #f5f5f5; cursor: not-allowed;"
+              placeholder="Loading..."
+            />
+            <small class="form-text text-muted">Email cannot be changed</small>
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select id="pf-gender">
+              <option value="">-- Select --</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" id="pf-dob">
+          </div>
+          <button class="btn success" onclick="saveProfile()">Save Changes</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="tpl-empty">
+  <div class="empty-state">
+    <div class="empty-icon"></div>
+    <div class="empty-text"></div>
+  </div>
+</template>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/common.js"></script>
+<script src="../js/page_router.js"></script>
+<script>window.__ACTIVE_TAB__ = 'profile';</script>
+<script src="../user/js/user_profile.js"></script>
+</body>
+</html>

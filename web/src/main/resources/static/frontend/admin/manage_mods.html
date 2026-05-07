@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Mods — Admin Portal — Forum HCMIU</title>
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+<div id="forumScreen" class="forum-layout" style="display: flex;">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo-icon small">◈</span>
+      <span class="topbar-title">Forum HCMIU - Admin Control Panel</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="chip-avatar admin" id="chipAvatar"></div>
+        <span id="chipName"></span>
+        <span class="role-tag admin" id="chipRole">Admin</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="forum-body">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-label">Admin Menu</div>
+        <div class="nav-item" data-tab="system-settings" onclick="window.location.href='system_settings.html'">
+          <span class="nav-icon">⚙</span>System Settings
+        </div>
+        <div class="nav-item active" data-tab="manage-mods" onclick="window.location.href='manage_mods.html'">
+          <span class="nav-icon">◈</span>Manage Mods
+        </div>
+        <div class="nav-item" data-tab="profile" onclick="window.location.href='admin_profile.html'">
+          <span class="nav-icon">👤</span>Profile
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+      <div id="page-manage-mods" class="page-section">
+        <div class="page-title">Manage Moderators</div>
+        <div class="page-desc">Admin manages moderators</div>
+        <div class="perm-banner admin">ℹ️ You are <strong>Admin</strong> — Manage Moderators and System Settings.</div>
+        <button class="btn primary" style="margin-bottom:1rem" onclick="addMod()">+ Add Moderator</button>
+        <div class="card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Managed by</th>
+                <th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="modTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="tpl-mod-row">
+  <tr>
+    <td class="mod-name"></td>
+    <td class="mod-email" style="color:var(--text-muted)"></td>
+    <td>Super Admin</td>
+    <td style="text-align:right;">
+      <button class="btn danger btn-delete">Delete</button>
+    </td>
+  </tr>
+</template>
+
+<template id="tpl-empty">
+  <div class="empty-state">
+    <div class="empty-icon"></div>
+    <div class="empty-text"></div>
+  </div>
+</template>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/common.js"></script>
+<script src="../js/page_router.js"></script>
+<script>window.__ACTIVE_TAB__ = 'manage-mods';</script>
+<script src="../admin/js/manage_mods.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ban History — Moderator Portal — Forum HCMIU</title>
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/mod.css">
+</head>
+<body>
+
+<div id="forumScreen" class="forum-layout" style="display: flex;">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo-icon small">◈</span>
+      <span class="topbar-title">Forum HCMIU - Moderator</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="chip-avatar mod" id="chipAvatar"></div>
+        <span id="chipName"></span>
+        <span class="role-tag mod" id="chipRole">Moderator</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="forum-body">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-label">Moderator Menu</div>
+        <div class="nav-item" data-tab="threads" onclick="window.location.href='mod_threads.html'">
+          <span class="nav-icon">◫</span>Manage Threads
+        </div>
+        <div class="nav-item" data-tab="messages" onclick="window.location.href='mod_messages.html'">
+          <span class="nav-icon">✉</span>Manage Messages
+        </div>
+        <div class="nav-item" data-tab="manage-users" onclick="window.location.href='manage_users.html'">
+          <span class="nav-icon">◉</span>Ban/Unban Users
+        </div>
+        <div class="nav-item active" data-tab="ban-history" onclick="window.location.href='ban_history.html'">
+          <span class="nav-icon">⊘</span>Ban History
+        </div>
+        <div class="nav-item" data-tab="profile" onclick="window.location.href='mod_profile.html'">
+          <span class="nav-icon">👤</span>Profile
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+      <div id="page-ban-history" class="page-section">
+        <div class="page-title">Ban History</div>
+        <div class="card">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Banned User</th><th>Mod</th><th>Reason</th><th>Date</th></tr></thead>
+            <tbody id="banTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="tpl-ban-row">
+  <tr>
+    <td class="b-id"></td>
+    <td class="b-user"></td>
+    <td class="b-mod"></td>
+    <td class="b-reason" style="color:var(--text-muted)"></td>
+    <td class="b-date" style="color:var(--text-muted)"></td>
+  </tr>
+</template>
+
+<template id="tpl-empty">
+  <div class="empty-state">
+    <div class="empty-icon"></div>
+    <div class="empty-text"></div>
+  </div>
+</template>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/common.js"></script>
+<script src="../js/page_router.js"></script>
+<script>window.__ACTIVE_TAB__ = 'ban-history';</script>
+<script src="../mod/js/ban_history.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+/* admin.css - Dành riêng cho giao diện Quản trị viên */
+
+:root {
+  --admin-accent: #7c3aed;
+  --admin-bg-light: #f5f3ff;
+  --admin-border: #ddd6fe;
+  --admin-text-dark: #4c1d95;
+}
+
+/* Banner đặc quyền Admin */
+.perm-banner.admin {
+  background: var(--admin-bg-light);
+  color: var(--admin-text-dark);
+  border: 1.5px solid var(--admin-border);
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Bảng dữ liệu (Danh sách Mod) */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 12px 8px;
+  border-bottom: 2px solid var(--border);
+}
+
+.data-table td {
+  padding: 14px 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Hàng cấu hình hệ thống (System Settings) */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-key {
+  flex: 1;
+}
+
+.setting-key .setting-desc {
+  display: block;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.setting-key .setting-code {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: monospace;
+  margin-top: 2px;
+}
+
+.setting-val {
+  font-weight: 700;
+  color: var(--admin-accent);
+  padding: 0 20px;
+  font-size: 15px;
+}
+
+/* Profile Form Admin */
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.compose-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.compose-input:focus {
+  border-color: var(--admin-accent);
+}
+
+/* Role badge Admin trong Topbar */
+.role-tag.admin {
+  background: var(--admin-bg-light);
+  color: var(--admin-text-dark);
+  border: 1px solid var(--admin-border);
+}

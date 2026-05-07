@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ForumHub — Sign Up</title>
   <link rel="stylesheet" href="../frontend/css/shared.css"/>
-  <link rel="stylesheet" href="../frontend/css/signup.css"/>
+  <link rel="stylesheet" href="../frontend/css/sign_up.css"/>
 </head>
 <body>
 
@@ -27,7 +27,7 @@
             <label>Profile Picture</label>
             <div class="avatar-row">
               <div class="avatar-preview" id="avatarPreview">
-                <span id="avatarEmoji">😊</span>
+                <!-- <span id="avatarEmoji">😊</span> -->
               </div>
               <div>
                 <input type="file" id="avatarInput" accept="image/*" style="display: none"/>
@@ -70,7 +70,26 @@
               Please enter a username (no spaces or special characters).
             </div>
           </div>
+          
+         <!-- gender -->
+<div class="form-group">
+  <label>Gender</label>
+  <div class="gender-row">
+    <label><input type="radio" name="gender" value="male"/> Male</label>
+    <label><input type="radio" name="gender" value="female"/> Female</label>
+    <label><input type="radio" name="gender" value="other"/> Other</label>
+  </div>
+</div>
 
+<!-- date of birth -->
+<div class="form-group">
+  <label for="dob">Date of Birth</label>
+  <div class="input-wrap">
+    <input type="date" id="dob"/>
+  </div>
+</div>
+
+          <!-- email -->
           <div class="form-group">
             <label for="email">Email Address</label>
             <div class="input-wrap">

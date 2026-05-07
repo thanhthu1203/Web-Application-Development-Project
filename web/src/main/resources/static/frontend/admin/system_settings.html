@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>System Settings — Admin Portal — Forum HCMIU</title>
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+<div id="forumScreen" class="forum-layout" style="display: flex;">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo-icon small">◈</span>
+      <span class="topbar-title">Forum HCMIU - Admin Control Panel</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="chip-avatar admin" id="chipAvatar"></div>
+        <span id="chipName"></span>
+        <span class="role-tag admin" id="chipRole">Admin</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="forum-body">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-label">Admin Menu</div>
+        <div class="nav-item active" data-tab="system-settings" onclick="window.location.href='system_settings.html'">
+          <span class="nav-icon">⚙</span>System Settings
+        </div>
+        <div class="nav-item" data-tab="manage-mods" onclick="window.location.href='manage_mods.html'">
+          <span class="nav-icon">◈</span>Manage Mods
+        </div>
+        <div class="nav-item" data-tab="profile" onclick="window.location.href='admin_profile.html'">
+          <span class="nav-icon">👤</span>Profile
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+      <div id="page-system-settings" class="page-section">
+        <div class="page-title">System Settings</div>
+        <div class="page-desc">System settings — only Admin can edit</div>
+        <div class="perm-banner admin">ℹ️ You are <strong>Admin</strong> — Manage Moderators and System Settings.</div>
+        <div class="card">
+          <div class="card-title">System Settings</div>
+          <div id="settingsList"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="tpl-setting-row">
+  <div class="setting-row">
+    <div class="setting-key">
+      <span class="setting-desc"></span>
+      <small class="setting-code"></small>
+    </div>
+    <div class="setting-val"></div>
+    <button class="btn btn-edit">Edit</button>
+  </div>
+</template>
+
+<template id="tpl-empty">
+  <div class="empty-state">
+    <div class="empty-icon"></div>
+    <div class="empty-text"></div>
+  </div>
+</template>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/common.js"></script>
+<script src="../js/page_router.js"></script>
+<script>window.__ACTIVE_TAB__ = 'system-settings';</script>
+<script src="../admin/js/ad_system_settings.js"></script>
+</body>
+</html>
