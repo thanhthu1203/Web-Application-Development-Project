@@ -11,7 +11,7 @@ db.connect(err => {
   if (err) {
     console.error("Lỗi DB: huhu", err);
   } else {
-    console.log("Kết nối MySQL thành công!");
+    console.log("connect to MySQL successfully!");
   }
 });
 

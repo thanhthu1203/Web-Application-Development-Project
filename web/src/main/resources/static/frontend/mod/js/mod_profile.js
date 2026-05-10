@@ -17,7 +17,7 @@ async function populateProfile() {
     }
   } catch (err) {
     console.error('Error loading profile:', err);
-    showToast('❌ Không thể tải thông tin profile');
+    showToast('❌ cannot load profile');
   }
 }
 

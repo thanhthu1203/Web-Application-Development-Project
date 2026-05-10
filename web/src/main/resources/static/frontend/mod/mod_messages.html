@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Messages — Moderator Portal — Forum HCMIU</title>
-  <link rel="stylesheet" href="../css/index.css">
-  <link rel="stylesheet" href="../css/mod.css">
+  
+  <link rel="stylesheet" href="../css/index.css">  
+  <link rel="stylesheet" href="css/mod.css">
+  <link rel="stylesheet" href="css/mod_messages.css">
 </head>
-<body>
+<body class="bg-gray">
 
 <div id="forumScreen" class="forum-layout" style="display: flex;">
   <header class="topbar">
@@ -47,37 +49,101 @@
       </nav>
     </aside>
 
-    <main class="main-content" id="mainContent">
+    <main class="main-content fb-feed-container" id="mainContent">
       <div id="page-messages" class="page-section">
-        <div class="page-title">Messages Management</div>
-        <div id="modMessagesList"></div>
+        <div class="page-title">Manage posts & discussions</div>
+        <div class="page-desc">Moderator has the right to view, edit, and delete all posts and comments.</div>
+
+        <div id="messagesList"></div>
+
+        <div class="card compose-card-wrapper">
+          <div class="card-title">Create New Message</div>
+          <select id="threadSelect" class="fb-select" style="width:100%; margin-bottom:10px;"></select>
+          <div class="compose-box" style="display:flex; gap:10px;">
+            <input class="compose-input" id="msgInput" placeholder="Enter message content..." style="flex:1;">
+            <button class="btn success" style="background-color: var(--mod-primary); color: white; border: none;" onclick="postMessage()">Post</button>
+          </div>
+        </div>
       </div>
     </main>
   </div>
 </div>
 
-<template id="tpl-message-mod">
-  <div class="thread-item message-item">
-    <div class="thread-icon-box" style="font-size:11px"></div>
-    <div class="thread-info">
-      <div class="thread-title message-content" style="font-size:13px"></div>
-      <div class="thread-meta">
-        <span class="meta-user"></span> <span class="meta-dot"></span>
-        <span class="meta-thread"></span> <span class="meta-dot"></span>
-        <span class="meta-date"></span>
+<template id="tpl-post-card">
+  <div class="post-card">
+    <div class="post-header">
+      <div class="post-avatar"></div>
+      <div class="post-info">
+        <div class="post-author"></div>
+        <div class="post-meta">
+          <span class="meta-date"></span>
+          <span class="meta-dot-divider">•</span>
+          <span class="thread-badge"></span>
+        </div>
+      </div>
+      <div class="post-owner-actions">
+        <button class="btn-icon btn-edit" title="Edit">✏️ Edit</button>
+        <button class="btn-icon danger btn-delete" title="Delete">🗑️ Delete</button>
       </div>
     </div>
-    <div class="thread-actions message-actions">
-      <button class="btn btn-edit">Edit</button>
-      <button class="btn danger btn-delete">Delete</button>
+    <div class="post-content"></div>
+    <div class="post-stats">
+      <span class="reaction-summary"></span>
+      <span class="comment-count-label"></span>
+    </div>
+    <div class="post-actions-bar">
+      <div class="emoji-row"></div>
+      <button class="btn-action-comment">💬 Comment</button>
+    </div>
+    <div class="comments-section" style="display:none;">
+      <div class="comments-list"></div>
+      <div class="comment-compose">
+        <div class="comment-avatar-sm current-user-avatar"></div>
+        <div class="comment-input-wrap">
+          <input class="comment-input" placeholder="Write a comment as a moderator...">
+          <button class="btn-send">➤</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
+<template id="tpl-comment-item">
+  <div class="comment-thread-item">
+    <div class="comment-row">
+      <div class="comment-avatar-sm author-avatar"></div>
+      <div class="comment-bubble-wrap">
+        <div class="comment-bubble">
+          <span class="comment-author"></span>
+          <span class="comment-text"></span>
+        </div>
+        <div class="comment-meta-row">
+          <span class="comment-time"></span>
+          <button class="btn-reply-link btn-reply-toggle" style="display:none;">Reply</button>
+          <button class="btn-reply-link btn-edit-comment">Edit</button>
+          <button class="btn-reply-link danger btn-delete-comment">Delete</button>
+        </div>
+        <div class="reply-box" style="display:none;">
+          <div class="comment-avatar-sm small current-user-avatar"></div>
+          <div class="comment-input-wrap">
+            <input class="comment-input small" placeholder="Reply...">
+            <button class="btn-send small">➤</button>
+          </div>
+        </div>
+        <div class="nested-comments-container"></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-reaction-btn">
+  <button class="reaction-btn"><span class="emoji-icon"></span> <span class="reaction-count"></span></button>
+</template>
+
 <template id="tpl-empty">
   <div class="empty-state">
-    <div class="empty-icon"></div>
-    <div class="empty-text"></div>
+    <div class="empty-icon">📭</div>
+    <div class="empty-text">No posts available.</div>
   </div>
 </template>
 
@@ -86,6 +152,6 @@
 <script src="../js/common.js"></script>
 <script src="../js/page_router.js"></script>
 <script>window.__ACTIVE_TAB__ = 'messages';</script>
-<script src="../mod/js/mod_messages.js"></script>
+<script src="js/mod_messages.js"></script>
 </body>
 </html>

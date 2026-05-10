@@ -23,7 +23,7 @@ function populateSystemSettings() {
 
 function editSetting(i) {
   const s = SYSTEM_SETTINGS[i];
-  const val = prompt(`Giá trị mới cho "${s.setting_key}":`, s.setting_value);
+  const val = prompt(`New value for "${s.setting_key}":`, s.setting_value);
   if (!val || !val.trim()) return;
 
   fetch(`${API}/system-settings`, {

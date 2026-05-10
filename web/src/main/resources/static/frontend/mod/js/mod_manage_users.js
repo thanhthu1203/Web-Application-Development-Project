@@ -6,19 +6,32 @@ async function loadData() {
 
 function populateUsers() {
   const container = document.getElementById('userTableBody');
-  container.innerHTML = '';
+  if (!container) return;
+  container.innerHTML = ''; // Xóa dữ liệu cũ
   
   const tpl = document.getElementById('tpl-user-row');
+  if (!tpl) return;
+
   APP_USERS.forEach(u => {
     const clone = tpl.content.cloneNode(true);
+    
+    // Gán thông tin họ tên và email
     clone.querySelector('.u-name').textContent = `${u.first_name} ${u.last_name}`;
     clone.querySelector('.u-email').textContent = u.email || '';
     
-    const statusTd = clone.querySelector('.u-status');
-    statusTd.innerHTML = u.is_banned 
-      ? '<span class="status-badge banned"><span class="status-dot"></span>Banned</span>'
-      : '<span class="status-badge active"><span class="status-dot"></span>Active</span>';
+    // Xử lý Badge trạng thái (Sử dụng classList thay vì chèn HTML trực tiếp)
+    const badge = clone.querySelector('.status-badge');
+    const statusText = clone.querySelector('.status-text');
+    
+    if (u.is_banned) {
+      badge.classList.add('banned');
+      statusText.textContent = 'Banned';
+    } else {
+      badge.classList.add('active');
+      statusText.textContent = 'Active';
+    }
 
+    // Cấu hình nút Ban/Unban
     const btn = clone.querySelector('.btn-ban-action');
     btn.textContent = u.is_banned ? 'Unban' : 'Ban';
     btn.className = `btn ${u.is_banned ? 'success' : 'danger'}`;

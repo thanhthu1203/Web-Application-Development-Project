@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Messages — Forum HCMIU</title>
-  <link rel="stylesheet" href="../css/user.css"/>
+  <link rel="stylesheet" href="../user/css/user_messages.css"/>
+  <link rel="stylesheet" href="../user/css/user.css"/>
 </head>
 <body>
 
@@ -51,8 +52,10 @@
         <div class="page-title">Posts</div>
         <div class="page-desc">All posts in the forum</div>
         <div class="perm-banner user">ℹ️ You are <strong>User</strong> — read posts, create posts, subscribe to threads.</div>
+        
         <div id="messagesList"></div>
-        <div class="card" style="margin-top:1rem">
+        
+        <div class="card compose-card-wrapper">
           <div class="card-title">Create New Post</div>
           <select id="threadSelect"></select>
           <div class="compose-box">
@@ -65,57 +68,77 @@
   </div>
 </div>
 
-<template id="tpl-message">
-  <div class="thread-item">
-    <div class="thread-icon-box" style="font-size:11px"></div>
-    <div class="thread-info">
-      <div class="thread-title" style="font-size:13px"></div>
-      <div class="thread-meta">
-        <span class="meta-user"></span>
-        <span class="meta-dot"></span>
-        <span class="meta-thread"></span>
-        <span class="meta-dot"></span>
-        <span class="meta-date"></span>
+<template id="tpl-post-card">
+  <div class="post-card">
+    <div class="post-header">
+      <div class="post-avatar"></div>
+      <div class="post-info">
+        <div class="post-author"></div>
+        <div class="post-meta">
+          <span class="meta-date"></span>
+          <span class="meta-dot-divider">•</span>
+          <span class="thread-badge"></span>
+        </div>
+      </div>
+      <div class="post-owner-actions hidden-default">
+        <button class="btn-icon btn-edit" title="Edit">✏️ Edit</button>
+        <button class="btn-icon danger btn-delete" title="Delete">🗑️ Delete</button>
       </div>
     </div>
-    <div class="thread-actions">
-      <button class="btn btn-comments" style="font-size:11px;">💬 Comments</button>
+    <div class="post-content"></div>
+    <div class="post-stats">
+      <span class="reaction-summary"></span>
+      <span class="comment-count-label"></span>
+    </div>
+    <div class="post-actions-bar">
+      <div class="emoji-row"></div>
+      <button class="btn-action-comment">💬 Comment</button>
+    </div>
+    <div class="comments-section hidden-default">
+      <div class="comments-list"></div>
+      <div class="comment-compose">
+        <div class="comment-avatar-sm current-user-avatar"></div>
+        <div class="comment-input-wrap">
+          <input class="comment-input" placeholder="Write a comment...">
+          <button class="btn-send">➤</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-<template id="tpl-empty">
-  <div class="empty-state">
-    <div class="empty-icon"></div>
-    <div class="empty-text"></div>
+<template id="tpl-comment-item">
+  <div class="comment-thread-item">
+    <div class="comment-row">
+      <div class="comment-avatar-sm author-avatar"></div>
+      <div class="comment-bubble-wrap">
+        <div class="comment-bubble">
+          <span class="comment-author"></span>
+          <span class="comment-text"></span>
+        </div>
+        <div class="comment-meta-row">
+          <span class="comment-time"></span>
+          <button class="btn-reply-link btn-reply-toggle hidden-default">Reply</button>
+          <button class="btn-reply-link btn-edit-comment hidden-default">Edit</button>
+          <button class="btn-reply-link danger btn-delete-comment hidden-default">Delete</button>
+        </div>
+        <div class="reply-box hidden-default">
+          <div class="comment-avatar-sm small current-user-avatar"></div>
+          <div class="comment-input-wrap">
+            <input class="comment-input small" placeholder="Reply...">
+            <button class="btn-send small">➤</button>
+          </div>
+        </div>
+        <div class="nested-comments-container"></div>
+      </div>
+    </div>
   </div>
 </template>
 
-<!-- Modal xem bài + bình luận -->
-<div id="commentModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:center; justify-content:center;">
-  <div style="background:#fff; border-radius:16px; width:600px; max-width:95vw; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
-    <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-      <span style="font-weight:700; font-size:15px;">Post & Comments</span>
-      <button onclick="closeCommentModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);">✕</button>
-    </div>
-    <div id="modalOriginalPost" style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); background:var(--bg);"></div>
-    <div id="modalCommentsList" style="flex:1; overflow-y:auto; padding:1rem 1.5rem; display:flex; flex-direction:column; gap:10px;"></div>
-    <div style="padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; gap:8px;">
-      <input id="commentInput" class="compose-input" placeholder="Write a comment..." style="flex:1;">
-      <button class="btn success" onclick="submitComment()">Comment</button>
-    </div>
-  </div>
-</div>
-
-<template id="tpl-comment">
-  <div class="comment-item" style="display:flex; gap:10px; align-items:flex-start;">
-    <div class="comment-avatar" style="width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary-text); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0;"></div>
-    <div style="flex:1; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:8px 12px;">
-      <div class="comment-author" style="font-weight:700; font-size:12px; margin-bottom:3px;"></div>
-      <div class="comment-content" style="font-size:13px; color:var(--text);"></div>
-      <div class="comment-date" style="font-size:11px; color:var(--text-muted); margin-top:4px;"></div>
-    </div>
-  </div>
+<template id="tpl-reaction-btn">
+  <button class="reaction-btn">
+    <span class="emoji-icon"></span> <span class="reaction-count"></span>
+  </button>
 </template>
 
 <div class="toast" id="toast"></div>
