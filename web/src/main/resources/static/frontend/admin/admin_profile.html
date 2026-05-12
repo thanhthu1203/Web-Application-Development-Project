@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile — Admin Portal — Forum HCMIU</title>
   <link rel="stylesheet" href="../css/index.css">
-  <link rel="stylesheet" href="../admin/css/admin.css">   
+  <link rel="stylesheet" href="../admin/css/admin.css">
+  <link rel="stylesheet" href="css/admin_avatar.css">   
 </head>
 <body>
-
 <div id="forumScreen" class="forum-layout" style="display: flex;">
   <header class="topbar">
     <div class="topbar-left">
@@ -29,15 +29,9 @@
     <aside class="sidebar">
       <nav class="sidebar-nav" id="sidebarNav">
         <div class="sidebar-label">Admin Menu</div>
-        <div class="nav-item" data-tab="system-settings" onclick="window.location.href='system_settings.html'">
-          <span class="nav-icon">⚙</span>System Settings
-        </div>
-        <div class="nav-item" data-tab="manage-mods" onclick="window.location.href='manage_mods.html'">
-          <span class="nav-icon">◈</span>Manage Mods
-        </div>
-        <div class="nav-item active" data-tab="profile" onclick="window.location.href='admin_profile.html'">
-          <span class="nav-icon">👤</span>Profile
-        </div>
+        <div class="nav-item" data-tab="system-settings" onclick="window.location.href='system_settings.html'"><span class="nav-icon">⚙</span>System Settings</div>
+        <div class="nav-item" data-tab="manage-mods" onclick="window.location.href='manage_mods.html'"><span class="nav-icon">◈</span>Manage Mods</div>
+        <div class="nav-item active" data-tab="profile" onclick="window.location.href='admin_profile.html'"><span class="nav-icon">👤</span>Profile</div>
       </nav>
     </aside>
 
@@ -48,6 +42,23 @@
         <div class="perm-banner admin">ℹ️ You are <strong>Admin</strong> — Manage Moderators and System Settings.</div>
         <div class="card" style="max-width:520px">
           <div class="card-title">Profile Information</div>
+
+          <div class="avatar-section">
+            <label>Profile Picture</label>
+            <div class="avatar-row">
+              <div class="avatar-preview" id="pf-avatarPreview"></div>
+              <div>
+                <input type="file" id="pf-avatarInput" accept="image/*" style="display: none"/>
+                <button type="button" class="btn" onclick="document.getElementById('pf-avatarInput').click()">Change Avatar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Username</label>
+            <input id="pf-username" placeholder="Username" class="compose-input" style="width: 100%;">
+          </div>
+
           <div class="form-group" style="margin-bottom: 1rem;">
             <label>First Name</label>
             <input id="pf-first" placeholder="First Name" class="compose-input" style="width: 100%;">
@@ -58,13 +69,7 @@
           </div>
           <div class="form-group">
             <label for="pf-email">Email Address</label>
-            <input 
-              type="email" 
-              id="pf-email" 
-              class="compose-input" 
-              style="width: 100%;"
-              placeholder="Loading..."
-            />
+            <input type="email" id="pf-email" class="compose-input" style="width: 100%; background-color: #f5f5f5; cursor: not-allowed;" placeholder="Loading..." readonly/>
             <small class="form-text text-muted">Email cannot be changed</small>
           </div>
           <div class="form-group" style="margin-bottom: 1rem;">
@@ -86,16 +91,7 @@
     </main>
   </div>
 </div>
-
-<template id="tpl-empty">
-  <div class="empty-state">
-    <div class="empty-icon"></div>
-    <div class="empty-text"></div>
-  </div>
-</template>
-
 <div class="toast" id="toast"></div>
-
 <script src="../js/common.js"></script>
 <script src="../js/page_router.js"></script>
 <script>window.__ACTIVE_TAB__ = 'profile';</script>

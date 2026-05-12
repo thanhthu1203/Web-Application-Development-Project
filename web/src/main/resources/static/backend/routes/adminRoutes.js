@@ -1,24 +1,49 @@
 module.exports = function(app, db) {
+
   // GET Admin profile by ID
   app.get("/admins/:id", (req, res) => {
-    const sql = `SELECT a.admin_id, a.admin_name, a.gender, a.date_of_birth, ac.email 
-                 FROM Admins a JOIN Accounts ac ON a.admin_id = ac.account_id 
-                 WHERE a.admin_id = ? LIMIT 1`;
+    const sql = `
+      SELECT a.admin_id, a.admin_name, a.username, a.avatar,
+             a.gender, a.date_of_birth, ac.email
+      FROM Admins a
+      JOIN Accounts ac ON a.admin_id = ac.account_id
+      WHERE a.admin_id = ? LIMIT 1
+    `;
     db.query(sql, [req.params.id], (err, results) => {
       if (err) return res.status(500).send(err);
-      if (results.length === 0) return res.status(404).json({ message: "Admin not found." });
+      if (results.length === 0)
+        return res.status(404).json({ message: "Admin not found." });
       res.json(results[0]);
     });
   });
 
-  // UPDATE profile Admin
+  // UPDATE Admin profile
   app.put("/admins/:id", (req, res) => {
-    const { name, gender, date_of_birth } = req.body;
-    db.query("UPDATE Admins SET admin_name=?, gender=?, date_of_birth=? WHERE admin_id=?",
-      [name, gender, date_of_birth, req.params.id],
-      (err) => {
-        if (err) return res.status(500).send(err);
-        res.json({ message: "Admin profile updated successfully." });
+    const { username, name, gender, date_of_birth, avatar } = req.body;
+    const adminId = req.params.id;
+
+    if (!username)
+      return res.status(400).json({ message: "Username is required." });
+
+    // Check username uniqueness (exclude current admin)
+    db.query(
+      "SELECT admin_id FROM Admins WHERE username = ? AND admin_id != ? LIMIT 1",
+      [username, adminId],
+      (errChk, rows) => {
+        if (errChk) return res.status(500).send(errChk);
+        if (rows.length > 0)
+          return res.status(409).json({ message: "Username already taken." });
+
+        db.query(
+          `UPDATE Admins
+           SET username=?, admin_name=?, gender=?, date_of_birth=?, avatar=?
+           WHERE admin_id=?`,
+          [username, name || null, gender || null, date_of_birth || null, avatar || null, adminId],
+          (err) => {
+            if (err) return res.status(500).send(err);
+            res.json({ message: "Admin profile updated successfully." });
+          }
+        );
       }
     );
   });
@@ -33,7 +58,8 @@ module.exports = function(app, db) {
 
   app.put("/system-settings", (req, res) => {
     const { setting_key, setting_value } = req.body;
-    db.query("UPDATE systemsettings SET setting_value=? WHERE setting_key=?",
+    db.query(
+      "UPDATE systemsettings SET setting_value=? WHERE setting_key=?",
       [setting_value, setting_key],
       (err) => {
         if (err) return res.status(500).send(err);

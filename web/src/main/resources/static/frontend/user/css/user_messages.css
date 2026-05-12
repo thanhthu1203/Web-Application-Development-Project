@@ -347,3 +347,11 @@
   flex-direction: column;
   gap: 4px;
 }
+
+/* Thêm đoạn này vào user_messages.css để fix lỗi dính chữ */
+.nested-comments-container { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+  margin-top: 8px; 
+}

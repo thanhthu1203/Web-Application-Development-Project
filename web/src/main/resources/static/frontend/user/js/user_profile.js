@@ -1,107 +1,123 @@
+// 
+
+// ----------- code mới để test ------------
 /* =============================================
-   user_profile.js - Xử lý Profile cho tất cả Role
+   user_profile.js
    ============================================= */
 
-// 1. Khởi tạo dữ liệu từ Common.js (Đã có sẵn API, currentUserId, currentRole...)
+let currentAvatarBase64 = null;
+
 async function populateProfile() {
   try {
-    let endpoint = '';
-    // Xác định endpoint dựa trên role của người đang đăng nhập
-    if (currentRole === 'admin') endpoint = `/admins/${currentUserId}`;
-    else if (currentRole === 'moderator') endpoint = `/moderators/${currentUserId}`;
-    else endpoint = `/users/${currentUserId}`;
+    // loadSession() already fetched fresh data and synced the session.
+    // We fetch once more here only to fill the form fields accurately.
+    const data = await fetch(`${API}/users/${currentUserId}`).then(r => r.json());
 
-    const data = await fetch(`${API}${endpoint}`).then(r => r.json());
+    const f = id => document.getElementById(id);
 
-    // Điền dữ liệu vào Form
-    if (currentRole === 'user') {
-      document.getElementById('pf-first').value = data.first_name || '';
-      document.getElementById('pf-last').value  = data.last_name || '';
-    } else {
-      // Với Admin/Mod dùng trường 'name' (admin_name/mod_name)
-      const fullName = data.admin_name || data.mod_name || '';
-      const parts = fullName.split(' ');
-      document.getElementById('pf-first').value = parts[0] || '';
-      document.getElementById('pf-last').value  = parts.slice(1).join(' ') || '';
+    if (f('pf-username')) f('pf-username').value = data.username    || '';
+    if (f('pf-first'))    f('pf-first').value    = data.first_name  || '';
+    if (f('pf-last'))     f('pf-last').value     = data.last_name   || '';
+    if (f('pf-email'))    f('pf-email').value     = data.email       || '';
+    if (f('pf-gender'))   f('pf-gender').value    = data.gender      || '';
+
+    if (f('pf-dob') && data.date_of_birth) {
+      const d = new Date(data.date_of_birth);
+      f('pf-dob').value = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+                            .toISOString().slice(0, 10);
     }
 
-    document.getElementById('pf-email').value  = data.email || '';
-    document.getElementById('pf-gender').value = data.gender || '';
-    if (data.date_of_birth) {
-      document.getElementById('pf-dob').value = data.date_of_birth.slice(0, 10);
-    }
+    currentAvatarBase64 = data.avatar || null;
+    _renderAvatarPreview(data.username || data.first_name || 'U');
+
   } catch (err) {
     console.error('Load Profile Error:', err);
-    showToast('❌ Không thể tải thông tin cá nhân');
+    showToast('❌ Could not load profile information.');
   }
 }
 
-async function saveProfile() {
-  const first = document.getElementById('pf-first').value.trim();
-  const last  = document.getElementById('pf-last').value.trim();
-  const gender = document.getElementById('pf-gender').value;
-  const dob    = document.getElementById('pf-dob').value || null;
-  const fullName = `${first} ${last}`.trim();
+function _renderAvatarPreview(fallbackLetter) {
+  const avPreview = document.getElementById('pf-avatarPreview');
+  if (!avPreview) return;
+  if (currentAvatarBase64) {
+    avPreview.innerHTML = `<img src="${currentAvatarBase64}" alt="Avatar">`;
+  } else {
+    avPreview.textContent = (fallbackLetter || 'U').charAt(0).toUpperCase();
+  }
+}
 
-  if (!first || !last) {
-    showToast('⚠ Vui lòng nhập đầy đủ Họ và Tên');
+// Handle avatar file selection
+document.getElementById('pf-avatarInput')?.addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('❌ Image too large! Please choose an image under 2 MB.');
+    this.value = '';
     return;
   }
 
-  // Chuẩn bị dữ liệu gửi đi (User gửi tách, Admin/Mod gửi gộp)
-  let body = {};
-  let endpoint = '';
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    currentAvatarBase64 = event.target.result;
+    _renderAvatarPreview();
+  };
+  reader.readAsDataURL(file);
+});
 
-  if (currentRole === 'user') {
-    endpoint = `/users/${currentUserId}`;
-    body = { first_name: first, last_name: last, gender, date_of_birth: dob };
-  } else if (currentRole === 'admin') {
-    endpoint = `/admins/${currentUserId}`;
-    body = { name: fullName, gender, date_of_birth: dob };
-  } else {
-    endpoint = `/moderators/${currentUserId}`;
-    body = { name: fullName, gender, date_of_birth: dob };
+async function saveProfile() {
+  const f = id => document.getElementById(id)?.value.trim();
+
+  const username = f('pf-username');
+  const first    = f('pf-first');
+  const last     = f('pf-last');
+  const gender   = document.getElementById('pf-gender')?.value || '';
+  const dob      = document.getElementById('pf-dob')?.value    || null;
+
+  if (!username || !first || !last) {
+    showToast('⚠ Please enter your Username, First Name, and Last Name.');
+    return;
   }
 
+  const body = { username, first_name: first, last_name: last, gender, date_of_birth: dob, avatar: currentAvatarBase64 };
+
   try {
-    const res = await fetch(`${API}${endpoint}`, {
-      method: 'PUT',
+    const res = await fetch(`${API}/users/${currentUserId}`, {
+      method:  'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body:    JSON.stringify(body)
     });
 
-    if (res.ok) {
-      showToast('✅ Đã lưu thông tin thành công!');
-      
-      // CẬP NHẬT TRẠNG THÁI NGAY LẬP TỨC (Rất quan trọng)
-      currentName = fullName;
-      renderTopbar(); // Vẽ lại thanh topbar với tên mới
-
-      // Cập nhật lại Session trong Storage
-      const raw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
-      if (raw) {
-        const userSession = JSON.parse(raw);
-        const updated = { ...userSession, ...body };
-        // Nếu là admin/mod thì cập nhật thêm trường tên gộp cho đồng bộ session
-        if (currentRole === 'admin') updated.admin_name = fullName;
-        if (currentRole === 'moderator') updated.mod_name = fullName;
-
-        const storage = localStorage.getItem('currentUser') ? localStorage : sessionStorage;
-        storage.setItem('currentUser', JSON.stringify(updated));
-      }
-    } else {
+    if (!res.ok) {
       const err = await res.json();
-      showToast('❌ Lỗi: ' + err.message);
+      showToast('❌ Error: ' + (err.message || 'Unknown error'));
+      return;
     }
+
+    showToast('✅ Profile saved successfully!');
+
+    // Update in-memory globals → topbar refreshes immediately
+    currentName              = username;
+    window.currentUserAvatar = currentAvatarBase64;
+    renderTopbar();
+
+    // Write updated fields back into the session cache so every other
+    // page (and the next loadSession call) sees the latest data
+    const raw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+    if (raw) {
+      const updated = { ...JSON.parse(raw), ...body, username };
+      const storage = localStorage.getItem('currentUser') ? localStorage : sessionStorage;
+      storage.setItem('currentUser', JSON.stringify(updated));
+    }
+
   } catch (err) {
-    showToast('❌ Không thể kết nối đến Server');
+    console.error(err);
+    showToast('❌ Could not connect to the server.');
   }
 }
 
-// Khởi chạy
 async function init() {
-  // loadSession() đã được định nghĩa trong common.js
-  if (!loadSession()) return; 
+  if (!await loadSession('user')) return;
   renderTopbar();
   await populateProfile();
 }

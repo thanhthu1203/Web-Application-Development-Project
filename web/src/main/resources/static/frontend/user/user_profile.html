@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile — Forum HCMIU</title>
+  <link rel="stylesheet" href="../user/css/user_avatar.css"/>
   <link rel="stylesheet" href="../user/css/user.css"/>
 </head>
 <body>
@@ -51,8 +52,28 @@
         <div class="page-title">Profile</div>
         <div class="page-desc">Your account information</div>
         <div class="perm-banner user">ℹ️ You are <strong>User</strong> — read posts, create posts, subscribe to threads.</div>
+        
         <div class="card" style="max-width:520px">
           <div class="card-title">Profile Information</div>
+
+          <div class="avatar-section">
+            <label>Profile Picture</label>
+            <div class="avatar-row">
+              <div class="avatar-preview" id="pf-avatarPreview"></div>
+              <div>
+                <input type="file" id="pf-avatarInput" accept="image/*" style="display: none"/>
+                <button type="button" class="btn" onclick="document.getElementById('pf-avatarInput').click()">
+                  Change Avatar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Username</label>
+            <input id="pf-username" placeholder="Username">
+          </div>
+
           <div class="form-group">
             <label>First Name</label>
             <input id="pf-first" placeholder="First Name">
@@ -68,6 +89,7 @@
               id="pf-email" class="compose-input" 
               style="background-color: #f5f5f5; cursor: not-allowed;"
               placeholder="Loading..."
+              readonly
             />
             <small class="form-text text-muted">Email cannot be changed</small>
           </div>
@@ -90,13 +112,6 @@
     </main>
   </div>
 </div>
-
-<template id="tpl-empty">
-  <div class="empty-state">
-    <div class="empty-icon"></div>
-    <div class="empty-text"></div>
-  </div>
-</template>
 
 <div class="toast" id="toast"></div>
 

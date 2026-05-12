@@ -1,0 +1,20 @@
+/* --- CSS CHUẨN CHO AVATAR PROFILE --- */
+.avatar-section { margin-bottom: 20px; }
+.avatar-section label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+.avatar-row { display: flex; align-items: center; gap: 14px; }
+.avatar-preview {
+  width: 72px !important; 
+  height: 72px !important; 
+  border-radius: 50% !important;
+  border: 2px solid var(--border); 
+  background: var(--bg-hover);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: bold; color: var(--text-muted);
+  overflow: hidden !important; flex-shrink: 0;
+}
+.avatar-preview img {
+  width: 100% !important; 
+  height: 100% !important; 
+  object-fit: cover !important; 
+  display: block;
+}
