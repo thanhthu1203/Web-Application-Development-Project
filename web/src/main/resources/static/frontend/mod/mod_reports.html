@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Reports — Forum Mod</title>
+  <link rel="stylesheet" href="../user/css/user.css"> <!-- Dùng chung CSS để giữ style -->
+</head>
+<body>
+<div class="forum-layout">
+  <header class="topbar">
+    <div class="topbar-left"><span class="topbar-title">Moderator Panel</span></div>
+  </header>
+  
+  <div class="forum-body">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <div class="nav-item" onclick="window.location.href='mod_threads.html'">Threads</div>
+        <div class="nav-item active">Manage Reports</div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <h2>User Reports</h2>
+      <p>Danh sách bài viết bị người dùng báo cáo vi phạm.</p>
+      
+      <div id="reportsList" class="threads-list">
+        <!-- Báo cáo sẽ hiện ở đây -->
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="tpl-report">
+  <div class="thread-item" style="border-inline-start: 4px solid #e74c3c; margin-block-end: 10px;">
+    <div class="thread-info">
+      <div class="thread-title" style="color: #e74c3c; font-weight: bold;">Lý do: <span class="report-reason"></span></div>
+      <div class="report-content" style="background: #f9f9f9; padding: 10px; margin: 5px 0;"></div>
+      <div class="thread-meta">
+        <span>Bởi: <span class="reporter"></span></span> | 
+        <span>Ngày: <span class="report-date"></span></span>
+      </div>
+    </div>
+    <div class="thread-actions">
+      <button class="btn btn-delete" style="background: #e74c3c; color: white;">Delete Post</button>
+      <button class="btn btn-ignore" style="margin-inline-start: 5px;">Ignore</button>
+    </div>
+  </div>
+</template>
+
+<script src="../js/common.js"></script>
+<script src="js/mod_reports.js"></script>
+</body>
+</html>
