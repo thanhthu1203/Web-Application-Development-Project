@@ -1,0 +1,640 @@
+/* ============================================================
+   theme.css — global visual upgrade (phiên bản 2)
+   - Topbar: gradient tím → xanh
+   - Sidebar: giữ nguyên màu trắng/xám gốc
+   - Card, button, badge, components: gradient đẹp hơn
+   - Animation: load-in khi trang render
+   Import file này SAU tất cả css cũ trong thẻ <head>
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Css variables mới ── */
+:root {
+  /* Gradient palette chính: tím → xanh cyan */
+  --grad-start:        #df678f;
+  --grad-mid:          #f3a6ba;
+  --grad-end:          #feeddd;
+  --grad-main:         linear-gradient(135deg, #df678f 0%, #f3a6ba 50%, #06b6d4 100%);
+  --grad-soft:         linear-gradient(135deg, rgba(124,58,237,0.07) 0%, rgba(6,182,212,0.07) 100%);
+  --grad-soft-solid:   #f0f0ff;
+
+  /* Shadow đẹp hơn */
+  --shadow-sm:         0 1px 4px rgba(99,102,241,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:         0 4px 20px rgba(99,102,241,0.14), 0 1px 6px rgba(0,0,0,0.05);
+  --shadow-card:       0 2px 12px rgba(99,102,241,0.09), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-glow:       0 4px 18px rgba(99,102,241,0.35);
+
+  /* Border hi */
+  --border-hi:         #c7d2fe;
+
+  /* Transition */
+  --transition:        0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Font override toàn bộ ── */
+* {
+  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* ============================================================
+   TOPBAR — gradient đậm, nổi bật
+   ============================================================ */
+.topbar {
+  background: var(--grad-main) !important;
+  border-bottom: none !important;
+  box-shadow: 0 2px 20px rgba(99,102,241,0.28) !important;
+  height: 60px !important;
+}
+
+.topbar-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 17px !important;
+  letter-spacing: -0.02em !important;
+}
+
+.logo-icon {
+  color: rgba(255,255,255,0.9) !important;
+}
+
+/* User chip trên topbar */
+.user-chip {
+  background: rgba(255,255,255,0.15) !important;
+  border: 1.5px solid rgba(255,255,255,0.25) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  transition: background var(--transition) !important;
+}
+.user-chip:hover {
+  background: rgba(255,255,255,0.22) !important;
+}
+
+#chipName {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* Role tag trên topbar */
+.role-tag {
+  background: rgba(255,255,255,0.2) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.35) !important;
+  font-weight: 700 !important;
+}
+
+/* Avatar chip trên topbar */
+.chip-avatar {
+  background: rgba(255,255,255,0.25) !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(255,255,255,0.4) !important;
+}
+
+/* Nút logout trên topbar */
+.btn-logout {
+  background: rgba(255,255,255,0.12) !important;
+  border: 1.5px solid rgba(255,255,255,0.25) !important;
+  color: rgba(255,255,255,0.85) !important;
+  font-weight: 600 !important;
+  transition: all var(--transition) !important;
+}
+.btn-logout:hover {
+  background: rgba(255,255,255,0.22) !important;
+  border-color: rgba(255,255,255,0.45) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ============================================================
+   SIDEBAR — giữ nền trắng gốc, chỉ đẹp hóa nav items
+   ============================================================ */
+
+/* Active nav item: gradient thay vì màu phẳng */
+.nav-item.active {
+  background: var(--grad-main) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 3px 12px rgba(99,102,241,0.35) !important;
+  font-weight: 600 !important;
+}
+
+/* Hover nav item: màu tím nhạt */
+.nav-item:hover {
+  background: var(--grad-soft-solid) !important;
+  color: var(--grad-start) !important;
+  transition: all var(--transition) !important;
+}
+
+/* ============================================================
+   PAGE TITLES — gradient text + shimmer
+   ============================================================ */
+.page-title {
+  font-weight: 800 !important;
+  font-size: 26px !important;
+  letter-spacing: -0.03em !important;
+  background: var(--grad-main) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: shimmer 4s linear infinite !important;
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+.card {
+  border-radius: 18px !important;
+  border: 1px solid #e5e7ef !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: box-shadow var(--transition), transform var(--transition) !important;
+}
+.card:hover {
+  box-shadow: var(--shadow-md) !important;
+}
+
+.card-title {
+  background: var(--grad-soft) !important;
+  margin: -1.25rem -1.5rem 1rem !important;
+  padding: 0.85rem 1.5rem !important;
+  border-radius: 18px 18px 0 0 !important;
+  border-bottom: 1px solid #e5e7ef !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  color: var(--grad-start) !important;
+}
+
+/* ============================================================
+   PERMISSION BANNER
+   ============================================================ */
+.perm-banner {
+  border-radius: 14px !important;
+}
+
+.perm-banner.admin {
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe) !important;
+  border-color: #ddd6fe !important;
+  color: #5b21b6 !important;
+}
+
+.perm-banner.mod {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5) !important;
+  border-color: #6ee7b7 !important;
+  color: #065f46 !important;
+}
+
+.perm-banner.user {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe) !important;
+  border-color: #93c5fd !important;
+  color: #1e40af !important;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn.primary {
+  background: var(--grad-main) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  box-shadow: var(--shadow-glow) !important;
+  transition: all var(--transition-bounce) !important;
+}
+.btn.primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(99,102,241,0.45) !important;
+  opacity: 0.93 !important;
+}
+.btn.primary:active {
+  transform: translateY(0) scale(0.97) !important;
+}
+
+.btn-login,
+.btn-submit {
+  background: var(--grad-main) !important;
+  border: none !important;
+  box-shadow: var(--shadow-glow) !important;
+  font-weight: 700 !important;
+  transition: all var(--transition-bounce) !important;
+}
+.btn-login:hover,
+.btn-submit:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(99,102,241,0.45) !important;
+  opacity: 0.93 !important;
+}
+
+.btn {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: all var(--transition) !important;
+}
+.btn:not(.primary):not(.danger):not(.success):hover {
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+.btn:active {
+  transform: scale(0.96) !important;
+  transition: transform 0.08s ease !important;
+}
+
+.btn.danger {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border: 1.5px solid #fecaca !important;
+}
+.btn.danger:hover {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(239,68,68,0.18) !important;
+}
+
+.btn.success {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(16,185,129,0.28) !important;
+}
+.btn.success:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(16,185,129,0.38) !important;
+}
+
+/* ============================================================
+   THREAD ITEMS
+   ============================================================ */
+.thread-item {
+  border-radius: 14px !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: all var(--transition) !important;
+}
+.thread-item:hover {
+  border-color: #818cf8 !important;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.13) !important;
+  transform: translateY(-2px) !important;
+}
+
+.thread-icon-box {
+  background: var(--grad-soft) !important;
+  border: 1px solid var(--border-hi) !important;
+}
+
+.tag-open {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
+  color: #065f46 !important;
+  border: 1px solid #6ee7b7 !important;
+  font-weight: 700 !important;
+}
+.tag-locked {
+  background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+  color: #b91c1c !important;
+  border: 1px solid #fca5a5 !important;
+  font-weight: 700 !important;
+}
+
+/* ============================================================
+   DATA TABLE
+   ============================================================ */
+.data-table th {
+  background: var(--grad-soft) !important;
+  color: var(--grad-start) !important;
+  font-weight: 700 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.08em !important;
+  padding: 12px 14px !important;
+  border-bottom: 2px solid var(--border-hi) !important;
+}
+
+.data-table td {
+  padding: 14px !important;
+  transition: background var(--transition) !important;
+}
+
+.data-table tr:hover td {
+  background: #f5f3ff !important;
+}
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+.status-badge.active {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
+  color: #065f46 !important;
+  border: 1px solid #6ee7b7 !important;
+}
+.status-badge.banned {
+  background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+  color: #991b1b !important;
+  border: 1px solid #fca5a5 !important;
+}
+
+/* ============================================================
+   SETTING ROW
+   ============================================================ */
+.setting-row {
+  border-radius: 8px !important;
+  padding: 16px 12px !important;
+  transition: background var(--transition) !important;
+}
+.setting-row:hover {
+  background: #f5f3ff !important;
+}
+
+.setting-val {
+  font-weight: 800 !important;
+  font-size: 18px !important;
+  background: var(--grad-main) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+.compose-input:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+select:focus {
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.10) !important;
+  outline: none !important;
+}
+
+/* ============================================================
+   POST CARDS (messages feed)
+   ============================================================ */
+.post-card {
+  border-radius: 18px !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: all var(--transition) !important;
+}
+.post-card:hover {
+  box-shadow: var(--shadow-md) !important;
+  transform: translateY(-2px) !important;
+}
+
+.post-avatar {
+  background: var(--grad-main) !important;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.22) !important;
+}
+
+.thread-badge {
+  background: var(--grad-soft) !important;
+  color: var(--grad-start) !important;
+  border: 1px solid var(--border-hi) !important;
+  font-weight: 700 !important;
+  border-radius: 99px !important;
+}
+
+.reaction-btn {
+  border-radius: 99px !important;
+  transition: all var(--transition) !important;
+}
+.reaction-btn:hover {
+  background: #f0f0ff !important;
+  border-color: #818cf8 !important;
+  transform: scale(1.08) !important;
+}
+.reaction-btn.active {
+  background: #ede9fe !important;
+  border-color: #818cf8 !important;
+  color: var(--grad-start) !important;
+}
+.reaction-btn:active {
+  transform: scale(0.9) !important;
+}
+
+.comment-avatar-sm {
+  background: #f0f0ff !important;
+  color: var(--grad-start) !important;
+  border: 1px solid var(--border-hi) !important;
+}
+
+.comment-bubble {
+  background: #f8f9ff !important;
+  border-radius: 0 18px 18px 18px !important;
+  border: 1px solid #e5e7ef !important;
+}
+
+.btn-action-comment {
+  border-radius: 99px !important;
+  transition: all var(--transition) !important;
+}
+.btn-action-comment:hover {
+  background: #f0f0ff !important;
+  border-color: #818cf8 !important;
+  color: var(--grad-start) !important;
+  transform: translateY(-1px) !important;
+}
+
+.comment-input-wrap:focus-within {
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.09) !important;
+}
+
+.btn-send:hover {
+  transform: scale(1.25) rotate(15deg) !important;
+  transition: transform var(--transition-bounce) !important;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast {
+  background: var(--grad-main) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 28px rgba(99,102,241,0.35) !important;
+  font-weight: 600 !important;
+}
+
+/* ============================================================
+   NOTIFICATION ITEMS
+   ============================================================ */
+.notif-item {
+  border-radius: 10px !important;
+  transition: all var(--transition) !important;
+}
+.notif-item:hover {
+  background: #f5f3ff !important;
+  transform: translateX(3px) !important;
+}
+
+/* ============================================================
+   AVATAR PREVIEW (profile)
+   ============================================================ */
+.avatar-preview {
+  border: 2.5px solid transparent !important;
+  background:
+    linear-gradient(white, white) padding-box,
+    var(--grad-main) border-box !important;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.18) !important;
+  transition: all var(--transition) !important;
+}
+.avatar-preview:hover {
+  box-shadow: 0 6px 24px rgba(99,102,241,0.30) !important;
+  transform: scale(1.03) !important;
+}
+
+/* ============================================================
+   LOGIN / SIGNUP
+   ============================================================ */
+.auth-card,
+.login-wrap {
+  border-radius: 24px !important;
+  box-shadow: 0 8px 40px rgba(99,102,241,0.11), 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+.auth-header h1,
+.logo-text {
+  font-weight: 800 !important;
+  background: var(--grad-main) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.btn-social {
+  border-radius: 10px !important;
+  transition: all var(--transition) !important;
+}
+.btn-social:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+  padding: 3.5rem 1rem !important;
+  border-radius: 18px !important;
+  background: var(--grad-soft) !important;
+  margin: 1rem 0 !important;
+}
+.empty-icon {
+  font-size: 40px !important;
+  margin-bottom: 12px !important;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a5b4fc, #67e8f9) !important;
+  border-radius: 99px !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #818cf8, #22d3ee) !important;
+}
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+
+/* Fade + slide lên */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Fade + slide từ trái */
+@keyframes fadeSlideRight {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Scale vào */
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Shimmer chạy trên gradient text */
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Topbar slide xuống từ trên */
+@keyframes topbarIn {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Glow pulse liên tục cho active nav */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 3px 12px rgba(99,102,241,0.32); }
+  50%       { box-shadow: 0 3px 20px rgba(99,102,241,0.52); }
+}
+
+/* ── Áp dụng animations ── */
+
+/* Topbar */
+.topbar {
+  animation: topbarIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+/* Main content */
+.main-content {
+  animation: fadeSlideUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.05s both !important;
+}
+
+/* Page section */
+.page-section {
+  animation: fadeSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.08s both !important;
+}
+
+/* Card */
+.card {
+  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both !important;
+}
+
+/* Sidebar nav items — staggered */
+.nav-item:nth-child(1) { animation: fadeSlideRight 0.32s ease 0.05s both; }
+.nav-item:nth-child(2) { animation: fadeSlideRight 0.32s ease 0.10s both; }
+.nav-item:nth-child(3) { animation: fadeSlideRight 0.32s ease 0.15s both; }
+.nav-item:nth-child(4) { animation: fadeSlideRight 0.32s ease 0.20s both; }
+.nav-item:nth-child(5) { animation: fadeSlideRight 0.32s ease 0.25s both; }
+.nav-item:nth-child(6) { animation: fadeSlideRight 0.32s ease 0.30s both; }
+
+/* Active nav glow liên tục */
+.nav-item.active {
+  animation: glowPulse 2.5s ease-in-out infinite !important;
+}
+
+/* Thread items — staggered */
+.thread-item:nth-child(1) { animation: fadeSlideUp 0.33s ease 0.05s both; }
+.thread-item:nth-child(2) { animation: fadeSlideUp 0.33s ease 0.10s both; }
+.thread-item:nth-child(3) { animation: fadeSlideUp 0.33s ease 0.15s both; }
+.thread-item:nth-child(4) { animation: fadeSlideUp 0.33s ease 0.20s both; }
+.thread-item:nth-child(5) { animation: fadeSlideUp 0.33s ease 0.25s both; }
+
+/* Post cards — staggered */
+.post-card:nth-child(1) { animation: fadeSlideUp 0.35s ease 0.05s both; }
+.post-card:nth-child(2) { animation: fadeSlideUp 0.35s ease 0.11s both; }
+.post-card:nth-child(3) { animation: fadeSlideUp 0.35s ease 0.17s both; }
+.post-card:nth-child(4) { animation: fadeSlideUp 0.35s ease 0.23s both; }
+.post-card:nth-child(5) { animation: fadeSlideUp 0.35s ease 0.29s both; }
+
+/* Auth card */
+.auth-card,
+.login-wrap {
+  animation: scaleIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
+}
+
+/* Data table rows — staggered */
+.data-table tbody tr:nth-child(1) { animation: fadeSlideUp 0.3s ease 0.08s both; }
+.data-table tbody tr:nth-child(2) { animation: fadeSlideUp 0.3s ease 0.13s both; }
+.data-table tbody tr:nth-child(3) { animation: fadeSlideUp 0.3s ease 0.18s both; }
+.data-table tbody tr:nth-child(4) { animation: fadeSlideUp 0.3s ease 0.23s both; }
+.data-table tbody tr:nth-child(5) { animation: fadeSlideUp 0.3s ease 0.28s both; }
+.data-table tbody tr:nth-child(6) { animation: fadeSlideUp 0.3s ease 0.33s both; }
