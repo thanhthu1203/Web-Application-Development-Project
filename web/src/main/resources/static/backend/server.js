@@ -1,128 +1,264 @@
+// Require packages
 const express = require("express");
-const cors    = require("cors");
-const bcrypt  = require("bcrypt");
-const db      = require("./db");
-const path    = require("path");
+const cors = require("cors");
+const bcrypt = require("bcrypt");
+const path = require("path");
+require('dotenv').config();
 
+// Require database connection
+const db = require("./db");
+
+// Require middleware
+const { 
+  validateSignup, 
+  validateLogin, 
+  validateMessage 
+} = require("./middleware/validation");
+
+const { 
+  authenticateToken, 
+  authorizeRole, 
+  generateToken 
+} = require("./middleware/authentication");
+
+const { 
+  errorHandler, 
+  notFoundHandler, 
+  APIError 
+} = require("./middleware/errorHandler");
+
+// Require routes
+const adminRoutes = require('./routes/adminRoutes');
+const modRoutes = require('./routes/modRoutes');
+const userRoutes = require('./routes/userRoutes');
+
+// Tạo Express app
 const app = express();
+
+// ========================================
+// MIDDLEWARE GLOBAL (áp dụng cho toàn app)
+// ========================================
+
+// CORS - cho phép cross-origin requests
 app.use(cors());
+
+// Parse JSON request body (max 10MB)
 app.use(express.json({ limit: '10mb' }));
+
+// Parse URL-encoded request body
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.use(express.static(path.join(__dirname, "../frontend")));
+// Serve static files (HTML, CSS, JS)
+app.use(express.static(path.join(__dirname, "../../../")));
 
-require('./routes/adminRoutes')(app, db);
-require('./routes/modRoutes')(app, db);
-require('./routes/userRoutes')(app, db);
+// ========================================
+// ROUTES - Authentication (không cần token)
+// ========================================
 
-// =======================
-// AUTH — LOGIN & SIGNUP
-// =======================
-app.get("/", (req, res) => res.send("Backend is running OK!"));
+// Health check
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "Backend is running OK!",
+    timestamp: new Date().toISOString()
+  });
+});
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ message: "Email and password cannot be empty." });
-
-  db.query("SELECT * FROM Accounts WHERE email = ? LIMIT 1", [email], async (err, accounts) => {
-    if (err) return res.status(500).send(err);
-    if (accounts.length === 0)
-      return res.status(401).json({ message: "Email or password is incorrect." });
-
-    const match = await bcrypt.compare(password, accounts[0].password);
-    if (!match)
-      return res.status(401).json({ message: "Email or password is incorrect." });
-
-    const id = accounts[0].account_id;
-
-    // Admin
-    db.query("SELECT * FROM Admins WHERE admin_id = ? LIMIT 1", [id], (err2, admins) => {
-      if (err2) return res.status(500).send(err2);
-      if (admins.length > 0) {
-        const a = admins[0];
-        return res.json({
-          account_id: id, email,
-          admin_id:   id,
-          admin_name: a.admin_name,
-          username:   a.username   || a.admin_name,
-          avatar:     a.avatar     || null,
-          gender:     a.gender     || null,
-          date_of_birth: a.date_of_birth || null,
-          role: 'admin'
-        });
-      }
-
-      // Moderator
-      db.query("SELECT * FROM Moderators WHERE mod_id = ? LIMIT 1", [id], (err3, mods) => {
-        if (err3) return res.status(500).send(err3);
-        if (mods.length > 0) {
-          const m = mods[0];
-          return res.json({
-            account_id: id, email,
-            mod_id:     id,
-            mod_name:   m.mod_name,
-            username:   m.username  || m.mod_name,
-            avatar:     m.avatar    || null,
-            gender:     m.gender    || null,
-            date_of_birth: m.date_of_birth || null,
-            role: 'moderator'
+// LOGIN route
+app.post("/login", validateLogin, (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Query user từ database
+    db.query(
+      "SELECT * FROM Accounts WHERE email = ? LIMIT 1",
+      [email],
+      async (err, accounts) => {
+        // Nếu có lỗi database
+        if (err) return next(err);
+        
+        // Nếu email không tồn tại
+        if (accounts.length === 0) {
+          throw new APIError("Email or password is incorrect.", 401);
+        }
+        
+        // Kiểm tra password có đúng không
+        const match = await bcrypt.compare(password, accounts[0].password);
+        if (!match) {
+          throw new APIError("Email or password is incorrect.", 401);
+        }
+        
+        const id = accounts[0].account_id;
+        
+        // Tìm user type: Admin, Moderator, hoặc User
+        db.query("SELECT * FROM Admins WHERE admin_id = ? LIMIT 1", [id], (err2, admins) => {
+          if (err2) return next(err2);
+          
+          // Nếu là Admin
+          if (admins.length > 0) {
+            const admin = admins[0];
+            const token = generateToken(id, 'admin');
+            
+            return res.json({
+              success: true,
+              message: "Login successful",
+              account_id: id,
+              email: email,
+              admin_id: id,
+              admin_name: admin.admin_name,
+              username: admin.username || admin.admin_name,
+              avatar: admin.avatar || null,
+              role: 'admin',
+              token: token
+            });
+          }
+          
+          // Tìm Moderator
+          db.query("SELECT * FROM Moderators WHERE mod_id = ? LIMIT 1", [id], (err3, mods) => {
+            if (err3) return next(err3);
+            
+            if (mods.length > 0) {
+              const mod = mods[0];
+              const token = generateToken(id, 'moderator');
+              
+              return res.json({
+                success: true,
+                message: "Login successful",
+                account_id: id,
+                email: email,
+                mod_id: id,
+                mod_name: mod.mod_name,
+                username: mod.username || mod.mod_name,
+                avatar: mod.avatar || null,
+                role: 'moderator',
+                token: token
+              });
+            }
+            
+            // Tìm User thường
+            db.query("SELECT * FROM AppUsers WHERE user_id = ? LIMIT 1", [id], (err4, users) => {
+              if (err4) return next(err4);
+              
+              if (users.length === 0) {
+                throw new APIError("Account does not exist.", 401);
+              }
+              
+              // Kiểm tra user có bị ban không
+              if (users[0].is_banned) {
+                throw new APIError("Your account has been banned.", 403);
+              }
+              
+              const user = users[0];
+              const token = generateToken(id, 'user');
+              
+              res.json({
+                success: true,
+                message: "Login successful",
+                account_id: id,
+                email: email,
+                user_id: id,
+                username: user.username || `${user.first_name} ${user.last_name}`,
+                avatar: user.avatar || null,
+                role: 'user',
+                token: token
+              });
+            });
           });
-        }
-
-        // AppUser
-        db.query("SELECT * FROM AppUsers WHERE user_id = ? LIMIT 1", [id], (err4, users) => {
-          if (err4) return res.status(500).send(err4);
-          if (users.length === 0)
-            return res.status(401).json({ message: "Account does not exist." });
-          if (users[0].is_banned)
-            return res.status(403).json({ message: "Your account has been banned." });
-
-          const user = { ...users[0] };
-          delete user.password;
-          return res.json({ ...user, account_id: id, email, role: 'user' });
         });
-      });
-    });
-  });
-});
-
-app.post("/signup", async (req, res) => {
-  const { email, password, username, first_name, last_name, gender, date_of_birth, avatar } = req.body;
-
-  if (!email || !password || !first_name || !last_name || !username)
-    return res.status(400).json({ message: "Please fill in all required fields." });
-
-  // Check username uniqueness
-  db.query("SELECT user_id FROM AppUsers WHERE username = ? LIMIT 1", [username], async (errChk, existing) => {
-    if (errChk) return res.status(500).send(errChk);
-    if (existing.length > 0)
-      return res.status(409).json({ message: "Username already taken. Please choose another." });
-
-    const hashed = await bcrypt.hash(password, 10);
-
-    db.query("INSERT INTO Accounts (email, password) VALUES (?, ?)", [email, hashed], (err, result) => {
-      if (err) {
-        if (err.code === "ER_DUP_ENTRY")
-          return res.status(409).json({ message: "Email already exists." });
-        return res.status(500).send(err);
       }
-
-      const newId = result.insertId;
-
-      // avatar is saved here — this was the missing piece causing user2's avatar to be lost
-      db.query(
-        `INSERT INTO AppUsers
-           (user_id, username, first_name, last_name, gender, date_of_birth, avatar, is_banned)
-         VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
-        [newId, username, first_name, last_name, gender || null, date_of_birth || null, avatar || null],
-        (err2) => {
-          if (err2) return res.status(500).send(err2);
-          res.json({ message: "Sign up successful!", user_id: newId });
-        }
-      );
-    });
-  });
+    );
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.listen(3000, () => console.log("Server running at http://localhost:3000"));
+// SIGNUP route
+app.post("/signup", validateSignup, async (req, res, next) => {
+  try {
+    const { email, password, username, first_name, last_name, gender, date_of_birth, avatar } = req.body;
+    
+    // Kiểm tra username duy nhất
+    db.query(
+      "SELECT user_id FROM AppUsers WHERE username = ? LIMIT 1",
+      [username],
+      async (errChk, existing) => {
+        if (errChk) return next(errChk);
+        
+        if (existing.length > 0) {
+          throw new APIError("Username already taken. Please choose another.", 409);
+        }
+        
+        // Hash password
+        const hashed = await bcrypt.hash(password, 10);
+        
+        // Insert vào Accounts table
+        db.query(
+          "INSERT INTO Accounts (email, password) VALUES (?, ?)",
+          [email, hashed],
+          (err, result) => {
+            if (err) {
+              if (err.code === "ER_DUP_ENTRY") {
+                return next(new APIError("Email already exists.", 409));
+              }
+              return next(err);
+            }
+            
+            const newId = result.insertId;
+            
+            // Insert vào AppUsers table
+            db.query(
+              `INSERT INTO AppUsers
+                 (user_id, username, first_name, last_name, gender, date_of_birth, avatar, is_banned)
+               VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
+              [newId, username, first_name, last_name, gender || null, date_of_birth || null, avatar || null],
+              (err2) => {
+                if (err2) return next(err2);
+                
+                res.json({ 
+                  success: true,
+                  message: "Sign up successful! Please login.", 
+                  user_id: newId 
+                });
+              }
+            );
+          }
+        );
+      }
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ========================================
+// ROUTES - Require authentication
+// ========================================
+
+// Admin routes - chỉ admin được access
+require('./routes/adminRoutes')(app, db, authenticateToken, authorizeRole);
+
+// Mod routes - admin hoặc mod được access
+require('./routes/modRoutes')(app, db, authenticateToken, authorizeRole);
+
+// User routes - user được access
+require('./routes/userRoutes')(app, db, authenticateToken);
+
+// ========================================
+// ERROR HANDLING (phải ở cuối)
+// ========================================
+
+// 404 Not Found handler
+app.use(notFoundHandler);
+
+// Global error handler (phải ở sau notFoundHandler)
+app.use(errorHandler);
+
+// ========================================
+// START SERVER
+// ========================================
+
+const PORT = process.env.SERVER_PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`\n✅ Server is running at http://localhost:${PORT}`);
+  console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}\n`);
+});
