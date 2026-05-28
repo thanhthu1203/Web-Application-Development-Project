@@ -25,7 +25,24 @@ function formatDate(date) {
   return date.toLocaleDateString('en-US');
 }
 
-/** Returns the current user's display name (username preferred) */
+// Hàm hiển thị "Edited at [time]" nếu message được edit
+function formatEditedTime(lastEditedAt) {
+  if (!lastEditedAt || lastEditedAt === 'null' || lastEditedAt === '') return '';
+  try {
+    const date = new Date(lastEditedAt);
+    if (isNaN(date.getTime())) return '';
+    const hours  = String(date.getHours()).padStart(2, '0');
+    const mins   = String(date.getMinutes()).padStart(2, '0');
+    const day    = String(date.getDate()).padStart(2, '0');
+    const month  = String(date.getMonth() + 1).padStart(2, '0');
+    const year   = date.getFullYear();
+    return `(Edited at ${hours}:${mins} on ${month}/${day}/${year})`;
+  } catch (e) {
+    return '';
+  }
+}
+
+// Hàm lấy tên hiển thị của người dùng hiện tại
 function getCurrentUserDisplayName() {
   try {
     const raw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
@@ -33,7 +50,7 @@ function getCurrentUserDisplayName() {
       const u = JSON.parse(raw);
       if (u.username) return u.username;
       const full = `${u.first_name || ''} ${u.last_name || ''}`.trim();
-      if (full)  return full;
+      if (full) return full;
     }
   } catch (e) {
     console.error('Error reading session:', e);
@@ -55,7 +72,6 @@ async function loadMessages() {
       fetch(`${API}/users`).then(r => r.json())
     ]);
 
-    // Build a map: user_id → { name, avatar }
     const userMap = {};
     users.forEach(u => {
       userMap[u.user_id] = {
@@ -127,64 +143,72 @@ function buildPostCard(msg) {
   const thread      = THREADS.find(t => t.thread_id === msg.thread_id);
   const threadTitle = thread ? thread.title : 'General Thread';
 
-  // Avatar: show image if available, else initials
-  const avatarEl = card.querySelector('.post-avatar');
+  // Hiển thị avatar tác giả
+  const avatarEl  = card.querySelector('.post-avatar');
   const postAvatar = msg.is_own_message ? window.currentUserAvatar : msg.author_avatar;
   if (postAvatar) {
-    avatarEl.innerHTML = `<img src="${postAvatar}"
-                               alt="Avatar"
+    avatarEl.innerHTML = `<img src="${postAvatar}" alt="Avatar"
                                style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
   } else {
     avatarEl.textContent = getInitials(msg.author_name);
   }
 
   card.querySelector('.post-author').textContent = msg.author_name;
-  card.querySelector('.meta-date').textContent   = formatDate(new Date(msg.posted_date));
+
+  const dateEl     = card.querySelector('.meta-date');
+  const postedText = formatDate(new Date(msg.posted_date));
+  const editedText = msg.last_edited_at ? ` ${formatEditedTime(msg.last_edited_at)}` : '';
+  dateEl.textContent  = postedText + editedText;
+  dateEl.style.fontSize = '0.85em';
+
   card.querySelector('.thread-badge').textContent = `📌 ${threadTitle}`;
   card.querySelector('.post-content').textContent = msg.content;
 
-  // Edit / Delete buttons (only for own posts)
+  // Chỉ hiển thị nút edit/delete nếu là bài của mình
   if (msg.is_own_message) {
     const ownerActions = card.querySelector('.post-owner-actions');
-    ownerActions.style.display = 'flex';
-    ownerActions.querySelector('.btn-edit').onclick   = () => handleEditPost(msg.message_id, msg.content);
-    ownerActions.querySelector('.btn-delete').onclick = () => handleDeletePost(msg.message_id);
+    if (ownerActions) {
+      ownerActions.style.display = 'flex';
+      const btnEdit   = ownerActions.querySelector('.btn-edit');
+      const btnDelete = ownerActions.querySelector('.btn-delete');
+      if (btnEdit)   btnEdit.onclick   = () => handleEditPost(msg.message_id, msg.content);
+      if (btnDelete) btnDelete.onclick = () => handleDeletePost(msg.message_id);
+    }
   }
 
-  // IDs for dynamic updates
-  card.querySelector('.reaction-summary').id   = `reaction-summary-${msg.message_id}`;
+  // Gán id cho các element cần tìm lại sau
+  card.querySelector('.reaction-summary').id    = `reaction-summary-${msg.message_id}`;
   card.querySelector('.comment-count-label').id = `comment-count-${msg.message_id}`;
-  card.querySelector('.comments-section').id   = `comments-section-${msg.message_id}`;
-  card.querySelector('.comments-list').id      = `comments-list-${msg.message_id}`;
+  card.querySelector('.comments-section').id    = `comments-section-${msg.message_id}`;
+  card.querySelector('.comments-list').id       = `comments-list-${msg.message_id}`;
 
-  const emojiRow   = card.querySelector('.emoji-row');
-  emojiRow.id      = `emoji-row-${msg.message_id}`;
+  const emojiRow = card.querySelector('.emoji-row');
+  emojiRow.id    = `emoji-row-${msg.message_id}`;
 
-  // Reaction buttons
+  // Tạo các nút emoji reaction
   const reactTpl = document.getElementById('tpl-reaction-btn');
   EMOJI_LIST.forEach(emoji => {
     const rClone = reactTpl.content.cloneNode(true);
     const rBtn   = rClone.querySelector('.reaction-btn');
     rBtn.dataset.emoji = emoji;
-    rBtn.querySelector('.emoji-icon').textContent  = emoji;
+    rBtn.querySelector('.emoji-icon').textContent = emoji;
     rBtn.onclick = () => toggleReaction(msg.message_id, emoji);
     emojiRow.appendChild(rClone);
   });
 
   card.querySelector('.btn-action-comment').onclick = () => toggleComments(msg.message_id);
 
-  // Current user avatar in comment compose box
+  // Hiển thị avatar người dùng hiện tại trong ô comment
   const composeAvatar = card.querySelector('.current-user-avatar');
   if (window.currentUserAvatar) {
-    composeAvatar.innerHTML = `<img src="${window.currentUserAvatar}"
-                                    alt="Avatar"
+    composeAvatar.innerHTML = `<img src="${window.currentUserAvatar}" alt="Avatar"
                                     style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
   } else {
     composeAvatar.textContent = getInitials(getCurrentUserDisplayName());
   }
 
-  const inputComment  = card.querySelector('.comment-input');
-  inputComment.id     = `comment-input-${msg.message_id}`;
+  const inputComment     = card.querySelector('.comment-input');
+  inputComment.id        = `comment-input-${msg.message_id}`;
   inputComment.onkeydown = (e) => { if (e.key === 'Enter') submitComment(msg.message_id); };
   card.querySelector('.btn-send').onclick = () => submitComment(msg.message_id);
 
@@ -195,10 +219,16 @@ function buildPostCard(msg) {
 
 async function toggleComments(messageId) {
   const section = document.getElementById(`comments-section-${messageId}`);
-  if (!section) return;
+  if (!section) {
+    console.error('Cannot find section comments-section-' + messageId);
+    return;
+  }
 
   const isVisible = section.style.display !== 'none';
-  if (isVisible) { section.style.display = 'none'; return; }
+  if (isVisible) {
+    section.style.display = 'none';
+    return;
+  }
 
   section.style.display = 'block';
   await loadAndRenderComments(messageId);
@@ -226,105 +256,143 @@ async function loadAndRenderComments(messageId) {
     renderNestedComments(listEl, data.comments || [], messageId);
   } catch (err) {
     listEl.innerHTML = '<div class="loading-comments">❌ Cannot load comments</div>';
-    console.error(err);
+    console.error('Error loading comments:', err);
   }
 }
 
-function renderNestedComments(container, comments, rootPostId, depth = 0, parentId = null) {
-  container.innerHTML = '';
+// Hàm render comment - dùng đúng template tpl-comment-item trong HTML
+function renderNestedComments(parentEl, comments, rootPostId) {
+  parentEl.innerHTML = '';
 
-  const levelComments = parentId === null
-    ? comments.filter(c => !c.parent_id || c.parent_id === rootPostId)
-    : comments.filter(c => c.parent_id === parentId);
-
-  if (levelComments.length === 0) {
-    if (depth === 0) container.innerHTML = '<div class="no-comments">No comments yet. Be the first to comment!</div>';
+  if (comments.length === 0) {
+    parentEl.innerHTML = '<div class="loading-comments">No comments yet</div>';
     return;
   }
 
+  // Lấy các comment cấp 1 (trực tiếp reply post gốc)
+  const topLevelComments = comments.filter(c => c.parent_id === rootPostId);
+
   const tpl = document.getElementById('tpl-comment-item');
+  if (!tpl) {
+    console.error('Template tpl-comment-item not found');
+    parentEl.innerHTML = '<div class="loading-comments">❌ Template error</div>';
+    return;
+  }
 
-  levelComments.forEach(comment => {
-    const clone   = tpl.content.cloneNode(true);
-    const wrapper = clone.querySelector('.comment-thread-item');
-    if (depth > 0) wrapper.classList.add('comment-nested');
-
-    // Comment author avatar — show image if available, else initials
-    const avatar = wrapper.querySelector('.author-avatar');
-    if (depth > 0) avatar.classList.add('nested');
-    if (comment.author_avatar) {
-      avatar.innerHTML = `<img src="${comment.author_avatar}"
-                               alt="Avatar"
-                               style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-    } else {
-      avatar.textContent = getInitials(comment.author_name);
-    }
-
-    // author_name from DB is already the username (COALESCE in SQL)
-    wrapper.querySelector('.comment-author').textContent = comment.author_name;
-    wrapper.querySelector('.comment-text').textContent   = comment.content;
-    wrapper.querySelector('.comment-time').textContent   = formatDate(new Date(comment.posted_date));
-
-    // Reply toggle (max 2 levels deep)
-    if (depth < 2) {
-      const replyToggleBtn = wrapper.querySelector('.btn-reply-toggle');
-      replyToggleBtn.style.display = 'inline-block';
-      replyToggleBtn.onclick = () => toggleReplyBox(comment.message_id, rootPostId);
-    }
-
-    // Edit / Delete for own comments
-    if (comment.user_id === currentUserId) {
-      const btnEdit = wrapper.querySelector('.btn-edit-comment');
-      const btnDel  = wrapper.querySelector('.btn-delete-comment');
-      btnEdit.style.display = 'inline-block';
-      btnDel.style.display  = 'inline-block';
-      btnEdit.onclick = () => handleEditComment(comment.message_id, comment.content, rootPostId);
-      btnDel.onclick  = () => handleDeleteComment(comment.message_id, rootPostId);
-    }
-
-    // Reply box
-    const replyBox  = wrapper.querySelector('.reply-box');
-    replyBox.id     = `reply-box-${comment.message_id}`;
-
-    // Current user avatar in reply compose
-    const replyAvatar = wrapper.querySelector('.current-user-avatar');
-    if (window.currentUserAvatar) {
-      replyAvatar.innerHTML = `<img src="${window.currentUserAvatar}"
-                                    alt="Avatar"
-                                    style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-    } else {
-      replyAvatar.textContent = getInitials(getCurrentUserDisplayName());
-    }
-
-    const replyInput    = wrapper.querySelector('.comment-input');
-    replyInput.id       = `reply-input-${comment.message_id}`;
-    replyInput.placeholder = `Reply to ${comment.author_name}...`;
-    replyInput.onkeydown   = (e) => { if (e.key === 'Enter') submitReply(comment.message_id, rootPostId); };
-    wrapper.querySelector('.reply-box .btn-send').onclick = () => submitReply(comment.message_id, rootPostId);
-
-    const nestedContainer = wrapper.querySelector('.nested-comments-container');
-    nestedContainer.id    = `nested-${comment.message_id}`;
-
-    container.appendChild(clone);
-
-    // Recurse for child comments
-    const appendedNested = container.querySelector(`#nested-${comment.message_id}`);
-    const childComments  = comments.filter(c => c.parent_id === comment.message_id);
-    if (childComments.length > 0 && appendedNested) {
-      renderNestedComments(appendedNested, comments, rootPostId, depth + 1, comment.message_id);
-    }
+  topLevelComments.forEach(c => {
+    const commentEl = buildCommentItem(c, comments, rootPostId);
+    if (commentEl) parentEl.appendChild(commentEl);
   });
 }
 
-function toggleReplyBox(commentId) {
-  const box = document.getElementById(`reply-box-${commentId}`);
-  if (!box) return;
-  const isVisible = box.style.display !== 'none';
-  box.style.display = isVisible ? 'none' : 'flex';
-  if (!isVisible) {
-    const input = document.getElementById(`reply-input-${commentId}`);
-    if (input) input.focus();
+// Hàm tạo 1 comment item từ template tpl-comment-item
+function buildCommentItem(c, allComments, rootPostId) {
+  const tpl   = document.getElementById('tpl-comment-item');
+  const clone = tpl.content.cloneNode(true);
+  const commentId = c.message_id;
+
+  // Tìm wrapper chính
+  const wrapper = clone.querySelector('.comment-thread-item');
+  if (!wrapper) return null;
+
+  // Hiển thị avatar tác giả comment
+  const avatar = clone.querySelector('.author-avatar');
+  if (avatar) {
+    if (c.author_avatar) {
+      avatar.innerHTML = `<img src="${c.author_avatar}" alt="Avatar"
+                               style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    } else {
+      avatar.textContent = getInitials(c.author_name);
+    }
   }
+
+  // Gán tên tác giả
+  const authorEl = clone.querySelector('.comment-author');
+  if (authorEl) authorEl.textContent = c.author_name;
+
+  // Gán nội dung comment
+  const textEl = clone.querySelector('.comment-text');
+  if (textEl) textEl.textContent = c.content;
+
+  // Gán thời gian (kèm edited nếu có)
+  const timeEl = clone.querySelector('.comment-time');
+  if (timeEl) {
+    const postedText = formatDate(new Date(c.posted_date));
+    const editedText = c.last_edited_at ? ` ${formatEditedTime(c.last_edited_at)}` : '';
+    timeEl.textContent    = postedText + editedText;
+    timeEl.style.fontSize = '0.8em';
+    if (c.last_edited_at) timeEl.style.color = 'var(--text-dim)';
+  }
+
+  // Hiện nút Reply
+  const btnReply = clone.querySelector('.btn-reply-toggle');
+  if (btnReply) {
+    btnReply.style.display = 'inline-block';
+    btnReply.onclick = () => {
+      const box = document.getElementById(`reply-box-${commentId}`);
+      if (!box) return;
+      const isOpen = box.style.display !== 'none';
+      box.style.display = isOpen ? 'none' : 'flex';
+      if (!isOpen) {
+        const inp = box.querySelector('.comment-input');
+        if (inp) inp.focus();
+      }
+    };
+  }
+
+  // Hiện nút Edit/Delete nếu là comment của mình
+  const btnEdit   = clone.querySelector('.btn-edit-comment');
+  const btnDelete = clone.querySelector('.btn-delete-comment');
+  if (c.user_id === currentUserId) {
+    if (btnEdit) {
+      btnEdit.style.display = 'inline-block';
+      btnEdit.onclick = () => handleEditComment(commentId, c.content, rootPostId);
+    }
+    if (btnDelete) {
+      btnDelete.style.display = 'inline-block';
+      btnDelete.onclick = () => handleDeleteComment(commentId, rootPostId);
+    }
+  }
+
+  // Thiết lập reply box
+  const replyBox = clone.querySelector('.reply-box');
+  if (replyBox) {
+    replyBox.id = `reply-box-${commentId}`;
+
+    // Hiển thị avatar người dùng hiện tại trong reply box
+    const replyAvatar = replyBox.querySelector('.current-user-avatar');
+    if (replyAvatar) {
+      if (window.currentUserAvatar) {
+        replyAvatar.innerHTML = `<img src="${window.currentUserAvatar}" alt="Avatar"
+                                      style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      } else {
+        replyAvatar.textContent = getInitials(getCurrentUserDisplayName());
+      }
+    }
+
+    const replyInput = replyBox.querySelector('.comment-input');
+    if (replyInput) {
+      replyInput.id        = `reply-input-${commentId}`;
+      replyInput.onkeydown = (e) => { if (e.key === 'Enter') submitReply(commentId, rootPostId); };
+    }
+
+    const replyBtn = replyBox.querySelector('.btn-send');
+    if (replyBtn) {
+      replyBtn.onclick = () => submitReply(commentId, rootPostId);
+    }
+  }
+
+  // Render các reply lồng nhau (cấp 2)
+  const nestedContainer = clone.querySelector('.nested-comments-container');
+  if (nestedContainer) {
+    const childComments = allComments.filter(child => child.parent_id === commentId);
+    childComments.forEach(child => {
+      const childEl = buildCommentItem(child, allComments, rootPostId);
+      if (childEl) nestedContainer.appendChild(childEl);
+    });
+  }
+
+  return wrapper;
 }
 
 // ── Submit actions ────────────────────────────────────
@@ -357,7 +425,7 @@ async function submitReply(parentCommentId, rootPostId) {
 
   if (!currentThreadId) {
     try {
-      const data = await fetch(`${API}/messages/${rootPostId}/full`).then(r => r.json());
+      const data  = await fetch(`${API}/messages/${rootPostId}/full`).then(r => r.json());
       currentThreadId = data.message.thread_id;
     } catch (e) { /* ignore */ }
   }
@@ -488,13 +556,11 @@ function updateReactionCounts(messageId, reactions) {
   const row = document.getElementById(`emoji-row-${messageId}`);
   if (!row) return;
 
-  const counts = {};
+  const counts     = {};
   const userReacted = {};
 
   reactions.forEach(r => {
     counts[r.emoji] = r.count;
-    
-    // Kiểm tra xem ID của user hiện tại có nằm trong danh sách những người đã thả cảm xúc này không
     if (r.user_ids) {
       const ids = r.user_ids.toString().split(',');
       userReacted[r.emoji] = ids.includes(currentUserId.toString());
@@ -508,8 +574,6 @@ function updateReactionCounts(messageId, reactions) {
     if (!btn) return;
     const count = counts[emoji] || 0;
     btn.querySelector('.reaction-count').textContent = count > 0 ? count : '';
-    
-    // SỬA LỖI Ở ĐÂY: Nút chỉ sáng lên (active) nếu chính user hiện tại đã click
     btn.classList.toggle('active', !!userReacted[emoji]);
   });
 
@@ -532,8 +596,7 @@ async function init() {
   await loadMessages();
   populateMessages();
 
-  // Jump to a specific post if ?postId= is in the URL
-  const urlParams   = new URLSearchParams(window.location.search);
+  const urlParams    = new URLSearchParams(window.location.search);
   const targetPostId = urlParams.get('postId');
   if (targetPostId) {
     window.history.replaceState({}, document.title, window.location.pathname);

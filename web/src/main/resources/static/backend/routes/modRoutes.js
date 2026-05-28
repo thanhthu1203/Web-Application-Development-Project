@@ -83,19 +83,34 @@ module.exports = function(app, db) {
     });
   });
 
-  // MESSAGES (Mod actions)
-  app.put("/messages/:id", (req, res) => {
+  // MESSAGES - Mod edit message (thêm vào Modifying table để track ai chỉnh sửa)
+  app.put("/messages/:id/mod-edit", (req, res) => {
     const { content, mod_id } = req.body;
+    const messageId = req.params.id;
+
+    // Kiểm tra mod_id có được truyền không
+    if (!mod_id) {
+      return res.status(400).json({ message: "mod_id is required for moderator edits." });
+    }
+
+    // Update message content
     db.query(
       "UPDATE messages SET content=? WHERE message_id=?",
-      [content, req.params.id],
+      [content, messageId],
       (err) => {
         if (err) return res.status(500).send(err);
+
+        // Insert vào Modifying table để track lịch sử chỉnh sửa
         db.query(
           "INSERT INTO Modifying (mod_id, message_id, modify_date) VALUES (?, ?, NOW())",
-          [mod_id || null, req.params.id],
+          [mod_id, messageId],
           (err2) => {
-            if (err2) console.error(err2);
+            if (err2) {
+              console.error("Error recording modification:", err2);
+              return res.status(500).json({ 
+                message: "Message updated but failed to record modification." 
+              });
+            }
             res.json({ message: "Message updated successfully." });
           }
         );

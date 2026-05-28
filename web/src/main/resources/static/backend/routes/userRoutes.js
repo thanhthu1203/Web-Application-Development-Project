@@ -1,4 +1,3 @@
-
 module.exports = function(app, db) {
 
   // ==========================================
@@ -128,7 +127,7 @@ module.exports = function(app, db) {
 
       const message = messages[0];
 
-      // Lấy bình luận lồng nhau (hỗ trợ đến cấp 2) - bao gồm đầy đủ mọi role để không sót avatar
+      // Lấy bình luận lồng nhau (hỗ trợ đến cấp 2)
       const sqlComments = `
         SELECT m.*,
                COALESCE(u.username, mod_u.username, adm.username, CONCAT(u.first_name, ' ', u.last_name), mod_u.mod_name, adm.admin_name) AS author_name,
@@ -145,7 +144,6 @@ module.exports = function(app, db) {
       db.query(sqlComments, [messageId, messageId], (err2, comments) => {
         if (err2) return res.status(500).send(err2);
 
-        // Thay thế sqlReactions cũ bằng đoạn này
         const sqlReactions = `
           SELECT emoji, COUNT(*) AS count,
                  GROUP_CONCAT(user_id) AS user_ids
@@ -230,6 +228,7 @@ module.exports = function(app, db) {
     if (!content || !content.trim())
       return res.status(400).json({ message: "Content cannot be empty." });
 
+    // Kiểm tra tin nhắn có tồn tại và người dùng có quyền edit không
     db.query("SELECT * FROM messages WHERE message_id = ? LIMIT 1", [messageId], (err, messages) => {
       if (err) return res.status(500).send(err);
       if (messages.length === 0)
@@ -238,8 +237,9 @@ module.exports = function(app, db) {
       if (messages[0].user_id !== user_id)
         return res.status(403).json({ message: "You can only edit your own messages." });
 
+      // Update message content và timestamp (để track khi edit)
       db.query(
-        "UPDATE messages SET content = ? WHERE message_id = ?",
+        "UPDATE messages SET content = ?, last_edited_at = NOW() WHERE message_id = ?",
         [content.trim(), messageId],
         (err2) => {
           if (err2) return res.status(500).send(err2);
@@ -278,7 +278,6 @@ module.exports = function(app, db) {
   // ==========================================
   // REACTIONS
   // ==========================================
-// Thay thế nguyên block API reactions này bằng đoạn code mới dưới đây để hỗ trợ hiển thị tên người dùng đã thả cảm xúc
   app.get("/messages/:id/reactions", (req, res) => {
     const sql = `
       SELECT r.emoji, COUNT(*) AS count,
