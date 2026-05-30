@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Manage Reports — Forum Mod</title>
-  <link rel="stylesheet" href="../user/css/user.css"> <!-- Dùng chung CSS để giữ style -->
-</head>
+  <link rel="stylesheet" href="../user/css/user.css"> </head>
 <body>
 <div class="forum-layout">
   <header class="topbar">
@@ -21,11 +20,10 @@
 
     <main class="main-content">
       <h2>User Reports</h2>
-      <p>Danh sách bài viết bị người dùng báo cáo vi phạm.</p>
+      <p>List of posts reported by users for violations.</p>
       
       <div id="reportsList" class="threads-list">
-        <!-- Báo cáo sẽ hiện ở đây -->
-      </div>
+        </div>
     </main>
   </div>
 </div>
@@ -33,11 +31,11 @@
 <template id="tpl-report">
   <div class="thread-item" style="border-inline-start: 4px solid #e74c3c; margin-block-end: 10px;">
     <div class="thread-info">
-      <div class="thread-title" style="color: #e74c3c; font-weight: bold;">Lý do: <span class="report-reason"></span></div>
+      <div class="thread-title" style="color: #e74c3c; font-weight: bold;">Reason: <span class="report-reason"></span></div>
       <div class="report-content" style="background: #f9f9f9; padding: 10px; margin: 5px 0;"></div>
       <div class="thread-meta">
-        <span>Bởi: <span class="reporter"></span></span> | 
-        <span>Ngày: <span class="report-date"></span></span>
+        <span>By: <span class="reporter"></span></span> | 
+        <span>Date: <span class="report-date"></span></span>
       </div>
     </div>
     <div class="thread-actions">
