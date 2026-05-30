@@ -1,7 +1,5 @@
-/* ─────────────────────────────────────────
-   login.css  –  style riêng cho trang đăng nhập
-   (import sau shared.css)
-   ───────────────────────────────────────── */
+/* login.css  –  style riêng cho trang đăng nhập
+   (import sau shared.css) */
 
 /* label row: label bên trái, "quên mật khẩu" bên phải */
 .label-row {
@@ -43,7 +41,7 @@
   cursor: pointer;
 }
 
-/* ── Error banner từ server ── */
+/*  Error banner từ server  */
 .error-banner {
   display: none;
   align-items: center;

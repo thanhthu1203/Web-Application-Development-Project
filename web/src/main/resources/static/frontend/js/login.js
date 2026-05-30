@@ -43,7 +43,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem('currentUser', JSON.stringify(data));
 
-    // ĐIỀU HƯỚNG ĐÚNG ĐẾN CÁC FILE ĐÃ TÁCH
+    // cửa sổ điều hướng
     if (data.role === 'admin') {
       window.location.href = 'admin/system_settings.html';
     } else if (data.role === 'moderator') {

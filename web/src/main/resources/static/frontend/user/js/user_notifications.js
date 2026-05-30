@@ -1,7 +1,4 @@
-// ===================================================
-// user_notifications.js - LOGIC ONLY (NO HTML/CSS)
-// ===================================================
-
+//  logic only no html or css
 let THREADS = [];
 let NOTIFICATIONS = [];
 let MESSAGES = [];

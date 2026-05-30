@@ -1,8 +1,6 @@
 module.exports = function(app, db) {
 
-  // ==========================================
-  // USERS
-  // ==========================================
+  // user routes
 
   // Lấy tất cả người dùng
   app.get("/users", (req, res) => {
@@ -60,9 +58,8 @@ module.exports = function(app, db) {
     );
   });
 
-  // ==========================================
-  // CATEGORIES & THREADS
-  // ==========================================
+  // categories & threads
+
   app.get("/categories", (req, res) => {
     db.query("SELECT * FROM categories", (err, result) => {
       if (err) return res.status(500).send(err);
@@ -77,9 +74,7 @@ module.exports = function(app, db) {
     });
   });
 
-  // ==========================================
-  // MESSAGES - GET
-  // ==========================================
+  // messages - GET
   
   // Lấy danh sách tin nhắn cùng với thông tin người đăng (hỗ trợ cả AppUsers, Moderators, Admins)
   app.get("/messages", (req, res) => {
@@ -179,9 +174,9 @@ module.exports = function(app, db) {
     });
   });
 
-  // ==========================================
-  // MESSAGES - CREATE
-  // ==========================================
+
+  // messages - create
+
   app.post("/messages", (req, res) => {
     const { content, user_id, thread_id, parent_id } = req.body;
 
@@ -218,9 +213,9 @@ module.exports = function(app, db) {
     );
   });
 
-  // ==========================================
-  // MESSAGES - EDIT (người dùng chỉ có thể sửa tin nhắn của mình)
-  // ==========================================
+
+  // messages - edit (người dùng chỉ có thể sửa tin nhắn của mình)
+
   app.put("/messages/:id", (req, res) => {
     const { content, user_id } = req.body;
     const messageId = req.params.id;
@@ -249,9 +244,9 @@ module.exports = function(app, db) {
     });
   });
 
-  // ==========================================
-  // MESSAGES - DELETE (xóa mềm)
-  // ==========================================
+
+  // messages - delete (xóa mềm)
+
   app.delete("/messages/:id", (req, res) => {
     const { user_id } = req.body;
     const messageId = req.params.id;
@@ -275,9 +270,8 @@ module.exports = function(app, db) {
     });
   });
 
-  // ==========================================
-  // REACTIONS
-  // ==========================================
+  // reactions
+
   app.get("/messages/:id/reactions", (req, res) => {
     const sql = `
       SELECT r.emoji, COUNT(*) AS count,
@@ -337,9 +331,9 @@ module.exports = function(app, db) {
     });
   });
 
-  // ==========================================
-  // SUBSCRIBE & NOTIFICATIONS
-  // ==========================================
+
+  // subscribes & notifications
+
   app.post("/subscribe", (req, res) => {
     const { user_id, thread_id } = req.body;
     db.query("INSERT INTO subscribes (user_id, thread_id) VALUES (?, ?)", [user_id, thread_id], (err) => {

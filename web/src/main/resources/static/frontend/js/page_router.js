@@ -1,7 +1,4 @@
-/* =============================================
-   page_router.js
-   Tự động nhận diện tab hiện tại và tô sáng menu
-   ============================================= */
+/* file này sẽ chứa code chung để tự động nhận diện tab hiện tại và tô sáng menu tương ứng trong sidebar. Mỗi trang HTML sẽ khai báo biến __ACTIVE_TAB__ để xác định tab nào đang active. */
 
 document.addEventListener("DOMContentLoaded", () => {
   // Kiểm tra xem trang HTML hiện tại có khai báo biến __ACTIVE_TAB__ không

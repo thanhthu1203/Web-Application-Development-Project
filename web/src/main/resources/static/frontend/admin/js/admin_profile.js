@@ -1,7 +1,3 @@
-/* =============================================
-   admin_profile.js
-   ============================================= */
-
 let currentAvatarBase64 = null;
 
 async function populateProfile() {

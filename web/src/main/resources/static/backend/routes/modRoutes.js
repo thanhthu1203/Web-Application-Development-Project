@@ -1,6 +1,6 @@
 module.exports = function(app, db) {
 
-  // GET Moderator profile by ID
+  // get Moderator profile by ID
   app.get("/moderators/:id", (req, res) => {
     const sql = `
       SELECT m.mod_id, m.mod_name, m.username, m.avatar,
@@ -17,7 +17,7 @@ module.exports = function(app, db) {
     });
   });
 
-  // UPDATE Moderator profile
+  // update Moderator profile
   app.put("/moderators/:id", (req, res) => {
     const { username, name, gender, date_of_birth, avatar } = req.body;
     const modId = req.params.id;
@@ -48,7 +48,7 @@ module.exports = function(app, db) {
     );
   });
 
-  // THREADS (Mod actions)
+  // threads (Mod actions)
   app.post("/threads", (req, res) => {
     const { title, category_id, created_by } = req.body;
     if (!title)
@@ -83,7 +83,7 @@ module.exports = function(app, db) {
     });
   });
 
-  // MESSAGES - Mod edit message (thêm vào Modifying table để track ai chỉnh sửa)
+  // messages - Mod edit message (thêm vào Modifying table để track ai chỉnh sửa)
   app.put("/messages/:id/mod-edit", (req, res) => {
     const { content, mod_id } = req.body;
     const messageId = req.params.id;
@@ -118,6 +118,7 @@ module.exports = function(app, db) {
     );
   });
 
+  // delete message
   app.delete("/messages/:id", (req, res) => {
     db.query("UPDATE messages SET is_deleted=1 WHERE message_id=?", [req.params.id], (err) => {
       if (err) return res.status(500).send(err);

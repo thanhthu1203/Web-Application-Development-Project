@@ -1,10 +1,3 @@
-// 
-
-// ----------- code mới để test ------------
-/* =============================================
-   user_profile.js
-   ============================================= */
-
 let currentAvatarBase64 = null;
 
 async function populateProfile() {

@@ -1,6 +1,6 @@
 module.exports = function(app, db) {
 
-  // GET Admin profile by ID
+  // get Admin profile by ID
   app.get("/admins/:id", (req, res) => {
     const sql = `
       SELECT a.admin_id, a.admin_name, a.username, a.avatar,
@@ -17,7 +17,7 @@ module.exports = function(app, db) {
     });
   });
 
-  // UPDATE Admin profile
+  // update Admin profile
   app.put("/admins/:id", (req, res) => {
     const { username, name, gender, date_of_birth, avatar } = req.body;
     const adminId = req.params.id;
@@ -48,7 +48,7 @@ module.exports = function(app, db) {
     );
   });
 
-  // SYSTEM SETTINGS
+  // system settings routes
   app.get("/system-settings", (req, res) => {
     db.query("SELECT * FROM systemsettings", (err, result) => {
       if (err) return res.status(500).send(err);
@@ -68,9 +68,7 @@ module.exports = function(app, db) {
     );
   });
 
-  // ==========================================
-  // MANAGE MODERATORS
-  // ==========================================
+  // Moderator management 
 
   // GET danh sách tất cả moderators
   app.get("/manages", (req, res) => {
@@ -179,7 +177,7 @@ module.exports = function(app, db) {
     );
   });
 
-  // DELETE - Xóa moderator
+  //  Xóa moderator
   app.delete("/manages/:mod_id", (req, res) => {
     const mod_id = req.params.mod_id;
 

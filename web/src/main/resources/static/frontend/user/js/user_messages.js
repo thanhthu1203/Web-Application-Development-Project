@@ -1,6 +1,6 @@
-// ===================================================
-// user_messages.js - DOM manipulation & logic
-// ===================================================
+/*
+ DOM manipulation & logic
+*/
 
 let ALL_MESSAGES      = [];
 let THREADS           = [];
@@ -585,8 +585,6 @@ function updateReactionCounts(messageId, reactions) {
       : '';
   }
 }
-
-// ── Init ──────────────────────────────────────────────
 
 async function init() {
   if (!loadSession('user')) return;

@@ -11,7 +11,7 @@ const API = 'http://localhost:3000';
   }
 })();
 
-// ── Avatar preview ────────────────────────────────────
+//  Avatar preview 
 
 let avatarBase64 = null; // store the base64 string to send to server on signup
 
@@ -38,7 +38,7 @@ avatarInput?.addEventListener('change', function (e) {
   reader.readAsDataURL(file);
 });
 
-// ── Password strength meter ───────────────────────────
+// ── Password strength meter 
 
 document.getElementById('password')?.addEventListener('input', function () {
   const val = this.value;
@@ -71,7 +71,7 @@ document.getElementById('toggleConfirm')?.addEventListener('click', () => {
   pw.type = pw.type === 'password' ? 'text' : 'password';
 });
 
-// ── Form submission ───────────────────────────────────
+// ── Form submission  
 
 document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();

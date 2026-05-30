@@ -1,6 +1,6 @@
-/* ======================================================
+/*  
    mod_messages.css — Giống User nhưng có màu Xanh Lá
-   ====================================================== */
+     */
 
 .meta-dot-divider { margin: 0 4px; color: var(--text-dim); }
 .post-owner-actions { display: flex; gap: 4px; margin-left: auto; }
@@ -93,5 +93,5 @@
 .btn-send:hover { transform: scale(1.2); }
 .btn-send.small { font-size: 13px; }
 
-/* Đã sửa margin-top và gap để tách các bình luận con ra */
+/* sửa margin-top và gap để tách các bình luận con ra */
 .nested-comments-container { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }

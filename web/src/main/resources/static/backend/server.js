@@ -35,11 +35,11 @@ const userRoutes = require('./routes/userRoutes');
 // Tạo Express app
 const app = express();
 
-// ========================================
-// MIDDLEWARE GLOBAL (áp dụng cho toàn app)
-// ========================================
 
-// CORS - cho phép cross-origin requests
+// middleware global (áp dụng cho toàn app)
+
+
+// cors - cho phép cross-origin requests
 app.use(cors());
 
 // Parse JSON request body (max 10MB)
@@ -51,9 +51,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, "../../../")));
 
-// ========================================
-// ROUTES - Authentication (không cần token)
-// ========================================
+ 
+// routes - Authentication (không cần token)
+ 
 
 // Health check
 app.get("/", (req, res) => {
@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// LOGIN route
+// login route
 app.post("/login", validateLogin, (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -171,7 +171,7 @@ app.post("/login", validateLogin, (req, res, next) => {
   }
 });
 
-// SIGNUP route
+// signup route
 app.post("/signup", validateSignup, async (req, res, next) => {
   try {
     const { email, password, username, first_name, last_name, gender, date_of_birth, avatar } = req.body;
@@ -229,9 +229,9 @@ app.post("/signup", validateSignup, async (req, res, next) => {
   }
 });
 
-// ========================================
-// ROUTES - Require authentication
-// ========================================
+ 
+// routes - Require authentication
+ 
 
 // Admin routes - chỉ admin được access
 require('./routes/adminRoutes')(app, db, authenticateToken, authorizeRole);
@@ -242,9 +242,9 @@ require('./routes/modRoutes')(app, db, authenticateToken, authorizeRole);
 // User routes - user được access
 require('./routes/userRoutes')(app, db, authenticateToken);
 
-// ========================================
-// ERROR HANDLING (phải ở cuối)
-// ========================================
+
+// error handling (phải ở cuối)
+
 
 // 404 Not Found handler
 app.use(notFoundHandler);
@@ -252,10 +252,8 @@ app.use(notFoundHandler);
 // Global error handler (phải ở sau notFoundHandler)
 app.use(errorHandler);
 
-// ========================================
-// START SERVER
-// ========================================
 
+// start server
 const PORT = process.env.SERVER_PORT || 3000;
 
 app.listen(PORT, () => {

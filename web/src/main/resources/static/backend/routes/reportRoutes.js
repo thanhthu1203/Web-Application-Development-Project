@@ -1,8 +1,8 @@
 module.exports = (app, db) => {
   
-    // ==========================================
-    // 1. PHẦN BẠN HỎI: User gửi báo cáo lên
-    // ==========================================
+
+    // 1.  User gửi báo cáo lên
+
     app.post("/api/report", (req, res) => {
       const { reporter_id, message_id, reason } = req.body;
   
@@ -20,9 +20,7 @@ module.exports = (app, db) => {
       });
     });
   
-    // ==========================================
-    // 2. PHẦN THÊM MỚI: Lấy danh sách báo cáo cho Mod
-    // ==========================================
+    // 2.  Lấy danh sách báo cáo cho Mod
     app.get("/api/moderator/reports", (req, res) => {
       const sql = `
         SELECT r.report_id, r.reason, r.created_at, 
@@ -40,9 +38,8 @@ module.exports = (app, db) => {
       });
     });
   
-    // ==========================================
-    // 3. PHẦN THÊM MỚI: Mod xử lý (Xóa hoặc Bỏ qua)
-    // ==========================================
+    // 3.  Mod xử lý (Xóa hoặc Bỏ qua)
+
     app.post("/api/moderator/resolve-report", (req, res) => {
       const { report_id, message_id, action } = req.body;
   

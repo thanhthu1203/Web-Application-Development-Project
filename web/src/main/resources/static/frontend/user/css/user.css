@@ -42,9 +42,7 @@ body {
   flex-direction: column;
 }
 
-/* ============================================================
-   FORUM LAYOUT
-============================================================ */
+/* forum layout */
 .forum-layout { display: flex; flex-direction: column; height: 100vh; }
 
 .topbar {
@@ -112,9 +110,9 @@ body {
 .nav-icon { font-size: 14px; width: 18px; text-align: center; }
 .main-content { flex: 1; overflow-y: auto; padding: 1.75rem 2rem; background: var(--bg); }
 
-/* ============================================================
-   COMPONENTS (Chỉ giữ lại những thẻ User cần)
-============================================================ */
+/*  
+   components (Chỉ giữ lại những thẻ User cần)
+  */
 .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
 .page-desc  { font-size: 13px; color: var(--text-muted); margin-bottom: 1.25rem; }
 

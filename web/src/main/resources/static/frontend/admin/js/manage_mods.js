@@ -99,7 +99,7 @@ async function submitAddMod() {
         username,
         mod_name,
         password: password || null,
-        admin_id: currentUserId   // ← thêm dòng này
+        admin_id: currentUserId   
       })
     });
 

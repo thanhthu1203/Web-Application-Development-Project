@@ -3,9 +3,7 @@
 
 const jwt = require('jsonwebtoken');
 
-// ========================================
-// BƯỚC 1: Generate Token (khi user login)
-// ========================================
+//  1: Generate Token (khi user login)
 
 // Hàm tạo JWT token khi user đăng nhập thành công
 function generateToken(userId, role) {
@@ -36,9 +34,8 @@ function generateToken(userId, role) {
   return token;
 }
 
-// ========================================
-// BƯỚC 2: Verify Token (kiểm tra token hợp lệ)
-// ========================================
+
+//  2: Verify Token (kiểm tra token hợp lệ)
 
 // Hàm kiểm tra JWT token có hợp lệ không
 function verifyToken(token) {
@@ -58,9 +55,7 @@ function verifyToken(token) {
   }
 }
 
-// ========================================
-// BƯỚC 3: Middleware - kiểm tra token ở mỗi route
-// ========================================
+//  3: Middleware - kiểm tra token ở mỗi route
 
 // Middleware để kiểm tra client có gửi token hợp lệ không
 const authenticateToken = (req, res, next) => {
@@ -100,9 +95,7 @@ const authenticateToken = (req, res, next) => {
   next();
 };
 
-// ========================================
-// BƯỚC 4: Middleware - kiểm tra role/quyền
-// ========================================
+//  4: Middleware - kiểm tra role/quyền
 
 // Middleware để kiểm tra user có role được phép không
 // Ví dụ: authorizeRole(['admin', 'mod'])
@@ -127,9 +120,7 @@ const authorizeRole = (allowedRoles) => {
   };
 };
 
-// ========================================
-// BƯỚC 5: Middleware - kiểm tra resource ownership
-// ========================================
+//  5: Middleware - kiểm tra resource ownership
 
 // Middleware để kiểm tra user chỉ có thể sửa/xóa dữ liệu của chính mình
 // Hoặc admin/mod có thể

@@ -1,7 +1,7 @@
-/* ─────────────────────────────────────────
+/* 
    signup.css  –  style riêng cho trang đăng ký
    (import sau shared.css)
-   ───────────────────────────────────────── */
+*/
 
 /* auth-wrap rộng hơn một chút so với login vì có nhiều trường */
 .auth-wrap { max-width: 460px; }

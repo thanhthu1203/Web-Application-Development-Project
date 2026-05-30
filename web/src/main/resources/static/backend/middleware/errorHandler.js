@@ -1,9 +1,7 @@
 // Middleware để xử lý lỗi chung (centralized error handling)
 // Thay vì mỗi route return error khác nhau, dùng error handler chung
 
-// ========================================
-// BƯỚC 1: Custom Error Class
-// ========================================
+//  1: Custom Error Class
 
 // Tạo error class riêng để có thể detect lỗi của app
 class APIError extends Error {
@@ -23,9 +21,7 @@ class APIError extends Error {
   }
 }
 
-// ========================================
-// BƯỚC 2: Global Error Handler Middleware
-// ========================================
+//  2: Global Error Handler Middleware
 
 // Middleware để xử lý tất cả lỗi
 // Phải có 4 tham số (err, req, res, next) để Express nhận diện là error handler
@@ -110,9 +106,7 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-// ========================================
-// BƯỚC 3: Helper Functions để throw errors
-// ========================================
+//  3: Helper Functions để throw errors
 
 // Hàm throw error validation
 const throwValidationError = (message) => {
@@ -144,9 +138,9 @@ const throwInternalError = (message = 'Internal server error') => {
   throw new APIError(message, 500);
 };
 
-// ========================================
-// BƯỚC 4: Async Error Wrapper
-// ========================================
+ 
+//  4: Async Error Wrapper
+ 
 
 // Wrapper để catch lỗi async/await trong route handler
 // Dùng khi route handler là async function
@@ -157,9 +151,9 @@ const asyncHandler = (fn) => {
   };
 };
 
-// ========================================
-// BƯỚC 5: Not Found Handler
-// ========================================
+ 
+//  5: Not Found Handler
+ 
 
 // Middleware để handle route không tồn tại (404)
 // Phải là middleware cuối cùng trong server.js

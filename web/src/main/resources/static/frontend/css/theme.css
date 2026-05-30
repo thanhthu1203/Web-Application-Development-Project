@@ -1,11 +1,11 @@
-/* ============================================================
+/*  
    theme.css — global visual upgrade (phiên bản 2)
    - Topbar: gradient tím → xanh
    - Sidebar: giữ nguyên màu trắng/xám gốc
    - Card, button, badge, components: gradient đẹp hơn
    - Animation: load-in khi trang render
    Import file này SAU tất cả css cũ trong thẻ <head>
-   ============================================================ */
+     */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
@@ -38,9 +38,9 @@
   font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
-/* ============================================================
-   TOPBAR — gradient đậm, nổi bật
-   ============================================================ */
+/*  
+   topbar — gradient đậm, nổi bật
+     */
 .topbar {
   background: var(--grad-main) !important;
   border-bottom: none !important;
@@ -106,9 +106,9 @@
   transform: translateY(-1px) !important;
 }
 
-/* ============================================================
-   SIDEBAR — giữ nền trắng gốc, chỉ đẹp hóa nav items
-   ============================================================ */
+/*  
+   sidebar — giữ nền trắng gốc, chỉ đẹp hóa nav items
+     */
 
 /* Active nav item: gradient thay vì màu phẳng */
 .nav-item.active {
@@ -126,9 +126,9 @@
   transition: all var(--transition) !important;
 }
 
-/* ============================================================
-   PAGE TITLES — gradient text + shimmer
-   ============================================================ */
+/*  
+   page title — gradient text + shimmer
+     */
 .page-title {
   font-weight: 800 !important;
   font-size: 26px !important;
@@ -141,9 +141,7 @@
   animation: shimmer 4s linear infinite !important;
 }
 
-/* ============================================================
-   CARD
-   ============================================================ */
+/*  card */
 .card {
   border-radius: 18px !important;
   border: 1px solid #e5e7ef !important;
@@ -166,9 +164,7 @@
   color: var(--grad-start) !important;
 }
 
-/* ============================================================
-   PERMISSION BANNER
-   ============================================================ */
+/*  permission banner */
 .perm-banner {
   border-radius: 14px !important;
 }
@@ -191,9 +187,7 @@
   color: #1e40af !important;
 }
 
-/* ============================================================
-   BUTTONS
-   ============================================================ */
+/*  buttons */
 .btn.primary {
   background: var(--grad-main) !important;
   color: #fff !important;
@@ -264,9 +258,7 @@
   box-shadow: 0 6px 18px rgba(16,185,129,0.38) !important;
 }
 
-/* ============================================================
-   THREAD ITEMS
-   ============================================================ */
+/*  thread items */
 .thread-item {
   border-radius: 14px !important;
   box-shadow: var(--shadow-sm) !important;
@@ -296,9 +288,7 @@
   font-weight: 700 !important;
 }
 
-/* ============================================================
-   DATA TABLE
-   ============================================================ */
+/*  data table */
 .data-table th {
   background: var(--grad-soft) !important;
   color: var(--grad-start) !important;
@@ -318,9 +308,7 @@
   background: #f5f3ff !important;
 }
 
-/* ============================================================
-   STATUS BADGES
-   ============================================================ */
+/*  status badges */
 .status-badge.active {
   background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
   color: #065f46 !important;
@@ -332,9 +320,7 @@
   border: 1px solid #fca5a5 !important;
 }
 
-/* ============================================================
-   SETTING ROW
-   ============================================================ */
+/*  setting row */
 .setting-row {
   border-radius: 8px !important;
   padding: 16px 12px !important;
@@ -353,9 +339,7 @@
   background-clip: text !important;
 }
 
-/* ============================================================
-   INPUTS
-   ============================================================ */
+/*  inputs */
 .compose-input:focus,
 input[type="text"]:focus,
 input[type="email"]:focus,
@@ -367,9 +351,7 @@ select:focus {
   outline: none !important;
 }
 
-/* ============================================================
-   POST CARDS (messages feed)
-   ============================================================ */
+/*  post cards (messages feed) */
 .post-card {
   border-radius: 18px !important;
   box-shadow: var(--shadow-card) !important;
@@ -444,9 +426,7 @@ select:focus {
   transition: transform var(--transition-bounce) !important;
 }
 
-/* ============================================================
-   TOAST
-   ============================================================ */
+/*  toast */
 .toast {
   background: var(--grad-main) !important;
   border-radius: 14px !important;
@@ -454,9 +434,7 @@ select:focus {
   font-weight: 600 !important;
 }
 
-/* ============================================================
-   NOTIFICATION ITEMS
-   ============================================================ */
+/*  notification items */
 .notif-item {
   border-radius: 10px !important;
   transition: all var(--transition) !important;
@@ -466,9 +444,7 @@ select:focus {
   transform: translateX(3px) !important;
 }
 
-/* ============================================================
-   AVATAR PREVIEW (profile)
-   ============================================================ */
+/*  avt preview (profile) */
 .avatar-preview {
   border: 2.5px solid transparent !important;
   background:
@@ -482,9 +458,7 @@ select:focus {
   transform: scale(1.03) !important;
 }
 
-/* ============================================================
-   LOGIN / SIGNUP
-   ============================================================ */
+/*  login / signup */
 .auth-card,
 .login-wrap {
   border-radius: 24px !important;
@@ -509,9 +483,7 @@ select:focus {
   box-shadow: var(--shadow-sm) !important;
 }
 
-/* ============================================================
-   EMPTY STATE
-   ============================================================ */
+/*  empty state */
 .empty-state {
   padding: 3.5rem 1rem !important;
   border-radius: 18px !important;
@@ -523,9 +495,7 @@ select:focus {
   margin-bottom: 12px !important;
 }
 
-/* ============================================================
-   SCROLLBAR
-   ============================================================ */
+/*  scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
@@ -536,9 +506,7 @@ select:focus {
   background: linear-gradient(180deg, #818cf8, #22d3ee) !important;
 }
 
-/* ============================================================
-   KEYFRAMES
-   ============================================================ */
+/*  keyframes */
 
 /* Fade + slide lên */
 @keyframes fadeSlideUp {
