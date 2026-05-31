@@ -174,45 +174,59 @@ module.exports = function(app, db) {
     });
   });
 
+// messages - create
+app.post("/messages", (req, res) => {
+  const { content, user_id, thread_id, parent_id } = req.body;
+  
+  if (!content || !content.trim())
+    return res.status(400).json({ message: "Content cannot be empty." });
 
-  // messages - create
+  // 1. Kiểm tra xem thread có bị khóa không trước khi cho phép post
+  db.query(
+    "SELECT is_locked FROM threads WHERE thread_id = ? LIMIT 1",
+    [thread_id],
+    (err, threads) => {
+      if (err) return res.status(500).send(err);
 
-  app.post("/messages", (req, res) => {
-    const { content, user_id, thread_id, parent_id } = req.body;
-
-    if (!content || !content.trim())
-      return res.status(400).json({ message: "Content cannot be empty." });
-
-    db.query(
-      "INSERT INTO messages (content, user_id, thread_id, parent_id) VALUES (?, ?, ?, ?)",
-      [content, user_id, thread_id, parent_id || null],
-      (err, result) => {
-        if (err) return res.status(500).send(err);
-        const message_id = result.insertId;
-
-        // Thông báo cho người theo dõi khi có bài đăng mới (không phải phản hồi)
-        if (!parent_id) {
-          db.query(
-            "SELECT user_id FROM subscribes WHERE thread_id = ? AND user_id != ?",
-            [thread_id, user_id],
-            (err2, users) => {
-              if (!err2 && users.length > 0) {
-                const values = users.map(u => [u.user_id, thread_id, message_id, 0, new Date()]);
-                db.query(
-                  "INSERT INTO notifications (user_id, thread_id, message_id, is_read, created_at) VALUES ?",
-                  [values],
-                  (err3) => { if (err3) console.error(err3); }
-                );
-              }
-            }
-          );
-        }
-
-        res.json({ message: "Message posted successfully.", message_id });
+      if (threads.length === 0) {
+        return res.status(404).json({ message: "Thread not found." });
       }
-    );
-  });
 
+      // Nếu thread đã bị khóa (is_locked = 1), từ chối lưu và trả về lỗi 403
+      if (threads[0].is_locked === 1) {
+        return res.status(403).json({ message: "This thread is locked. You cannot post messages here." });
+      }
+
+      // 2. Nếu thread vẫn mở (is_locked = 0), tiến hành insert tin nhắn bình thường
+      db.query(
+        "INSERT INTO messages (content, user_id, thread_id, parent_id) VALUES (?, ?, ?, ?)",
+        [content, user_id, thread_id, parent_id || null],
+        (err2, result) => {
+          if (err2) return res.status(500).send(err2);
+          const message_id = result.insertId;
+
+          if (!parent_id) {
+            db.query(
+              "SELECT user_id FROM subscribes WHERE thread_id = ? AND user_id != ?",
+              [thread_id, user_id],
+              (err3, users) => {
+                if (!err3 && users.length > 0) {
+                  const values = users.map(u => [u.user_id, thread_id, message_id, 0, new Date()]);
+                  db.query(
+                    "INSERT INTO notifications (user_id, thread_id, message_id, is_read, created_at) VALUES ?",
+                    [values],
+                    (err4) => { if (err4) console.error(err4); }
+                  );
+                }
+              }
+            );
+          }
+          res.json({ message: "Message posted successfully.", message_id });
+        }
+      );
+    }
+  );
+});
 
   // messages - edit (người dùng chỉ có thể sửa tin nhắn của mình)
 

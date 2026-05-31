@@ -5,10 +5,23 @@ let activeFilter = 'all';
 
 // ── Load dữ liệu ─────────────────────────────────────
 
+// Tải danh sách report từ server
 async function loadReports() {
+  const container = document.getElementById('reportsList');
+  if (!container) return;
+
   try {
-    const res = await fetch('/api/moderator/reports');
+    const res = await fetch(`${API}/api/moderator/reports`, {
+      method:  'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to load reports');
+    }
+
     ALL_REPORTS = await res.json();
+
   } catch (err) {
     console.error('Error loading reports:', err);
     ALL_REPORTS = [];
@@ -21,6 +34,7 @@ function formatDate(raw) {
   if (!raw) return '';
   const date = new Date(raw);
   if (isNaN(date)) return raw;
+
   const now      = new Date();
   const diffMs   = now - date;
   const diffMins = Math.floor(diffMs / 60000);
@@ -34,35 +48,38 @@ function formatDate(raw) {
   return date.toLocaleDateString('en-US');
 }
 
-// ── Cập nhật số lượng trên filter buttons ─────────────
+// ── Cập nhật số lượng trên các filter buttons ─────────
 
 function updateFilterCounts() {
   const total     = ALL_REPORTS.length;
-  const pending   = ALL_REPORTS.filter(r => r.status === 'Pending').length;
-  const resolved  = ALL_REPORTS.filter(r => r.status === 'Resolved').length;
-  const dismissed = ALL_REPORTS.filter(r => r.status === 'Dismissed').length;
+  const pending   = ALL_REPORTS.filter(r => r.status === 'pending').length;
+  const resolved  = ALL_REPORTS.filter(r => r.status === 'resolved').length;
+  const dismissed = ALL_REPORTS.filter(r => r.status === 'ignored').length;
 
-  document.getElementById('count-all').textContent       = total;
-  document.getElementById('count-pending').textContent   = pending;
-  document.getElementById('count-resolved').textContent  = resolved;
-  document.getElementById('count-dismissed').textContent = dismissed;
+  const elAll       = document.getElementById('count-all');
+  const elPending   = document.getElementById('count-pending');
+  const elResolved  = document.getElementById('count-resolved');
+  const elDismissed = document.getElementById('count-dismissed');
+
+  if (elAll)       elAll.textContent       = total;
+  if (elPending)   elPending.textContent   = pending;
+  if (elResolved)  elResolved.textContent  = resolved;
+  if (elDismissed) elDismissed.textContent = dismissed;
 }
 
-// ── Filter reports theo trạng thái ───────────────────
+// ── Xử lý click filter button ─────────────────────────
 
 function filterReports(filter) {
   activeFilter = filter;
 
-  // Cập nhật active class cho buttons
   document.querySelectorAll('.report-filter-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.filter === filter);
   });
 
-  // Render lại danh sách
   populateReports();
 }
 
-// ── Render empty state ────────────────────────────────
+// ── Render trạng thái rỗng ────────────────────────────
 
 function renderEmpty(container, icon, text) {
   container.innerHTML = '';
@@ -72,16 +89,23 @@ function renderEmpty(container, icon, text) {
   container.appendChild(tpl);
 }
 
-// ── Render danh sách reports ──────────────────────────
+// ── Render danh sách report ───────────────────────────
 
 function populateReports() {
   const container = document.getElementById('reportsList');
+  if (!container) return;
   container.innerHTML = '';
 
-  // Lọc theo filter hiện tại
+  // Lọc theo filter đang active
+  // HTML gửi 'Pending'/'Resolved'/'Dismissed', DB lưu 'pending'/'resolved'/'ignored'
   const filtered = activeFilter === 'all'
     ? ALL_REPORTS
-    : ALL_REPORTS.filter(r => r.status === activeFilter);
+    : ALL_REPORTS.filter(r => {
+        if (activeFilter === 'Pending')   return r.status === 'pending';
+        if (activeFilter === 'Resolved')  return r.status === 'resolved';
+        if (activeFilter === 'Dismissed') return r.status === 'ignored';
+        return true;
+      });
 
   if (filtered.length === 0) {
     const emptyMsg = activeFilter === 'all'
@@ -97,65 +121,74 @@ function populateReports() {
     const clone = tpl.content.cloneNode(true);
     const card  = clone.querySelector('.report-card');
 
-    // Thêm class để mờ bớt card đã xử lý
-    if (r.status === 'Resolved')  card.classList.add('is-resolved');
-    if (r.status === 'Dismissed') card.classList.add('is-dismissed');
+    // Làm mờ card đã được xử lý
+    if (r.status === 'resolved') card.classList.add('is-resolved');
+    if (r.status === 'ignored')  card.classList.add('is-dismissed');
 
-    // Header
+    // Header: ID và ngày tạo report
     card.querySelector('.report-id').textContent   = `#${r.report_id}`;
     card.querySelector('.report-date').textContent = formatDate(r.created_at);
 
     // Badge trạng thái
     const badge = card.querySelector('.report-status-badge');
-    badge.textContent = r.status;
-    badge.classList.add(r.status.toLowerCase());
+    const statusLabel = { pending: 'Pending', resolved: 'Resolved', ignored: 'Dismissed' }[r.status] || r.status;
+    badge.textContent = statusLabel;
+    badge.classList.add(r.status);
 
-    // Thông tin bài viết bị report
+    // Thông tin bài bị report
     const authorName = r.author_username || r.author_name || 'Unknown user';
     card.querySelector('.report-post-author').textContent = `👤 ${authorName}`;
     card.querySelector('.report-post-thread').textContent = `📌 ${r.thread_title || 'Unknown thread'}`;
 
     const contentEl = card.querySelector('.report-post-content');
-    if (r.message_is_deleted) {
+    // Ưu tiên hiện nội dung gốc, fallback về snapshot lúc bị report
+    const displayContent = r.message_content || r.message_content_snapshot;
+    if (r.message_is_deleted || !displayContent) {
       contentEl.textContent = '(This post has been deleted)';
       contentEl.classList.add('is-deleted');
     } else {
-      contentEl.textContent = r.message_content || '(content unavailable)';
+      contentEl.textContent = displayContent;
     }
 
-    // Lý do và người report
-    card.querySelector('.report-reason').textContent = r.reason;
+    // Lý do report — nếu là "Other" thì hiện custom_reason
+    const reasonText = (r.reason === 'Other' && r.custom_reason)
+      ? r.custom_reason
+      : r.reason || '(no reason provided)';
+    card.querySelector('.report-reason').textContent = reasonText;
+
+    // Người đã report
     const reporterName = r.reporter_username || r.reporter_email || 'Unknown';
     card.querySelector('.report-reporter').textContent = reporterName;
 
-    // Thông tin mod đã xử lý (chỉ hiện khi đã xử lý)
-    if (r.status !== 'Pending') {
+    // Thông tin mod đã xử lý — chỉ hiện khi không phải pending
+    if (r.status !== 'pending') {
       const resolverRow   = card.querySelector('.report-resolver-row');
       const resolvedAtRow = card.querySelector('.report-resolved-at-row');
       if (resolverRow)   resolverRow.style.display   = 'flex';
       if (resolvedAtRow) resolvedAtRow.style.display = 'flex';
 
-      card.querySelector('.report-resolver').textContent   = r.resolved_by_name || 'Unknown mod';
+      card.querySelector('.report-resolver').textContent    = r.resolved_by_name || 'Unknown mod';
       card.querySelector('.report-resolved-at').textContent = formatDate(r.resolved_at);
     }
 
-    // Nút hành động chỉ hiện khi Pending
-    if (r.status === 'Pending') {
+    // Nút hành động — chỉ hiện khi đang Pending
+    if (r.status === 'pending') {
       const actionsEl = card.querySelector('.report-actions');
       actionsEl.style.display = 'flex';
 
       const btnDelete  = card.querySelector('.btn-resolve-delete');
       const btnDismiss = card.querySelector('.btn-resolve-dismiss');
 
-      btnDelete.onclick  = () => handleResolve(r.report_id, r.message_id, 'delete');
-      btnDismiss.onclick = () => handleResolve(r.report_id, r.message_id, 'dismiss');
+      // Gửi 'delete' hoặc 'ignore' — đúng với backend reportRoutes.js
+      if (btnDelete)  btnDelete.onclick  = () => handleResolve(r.report_id, r.message_id, 'delete');
+      if (btnDismiss) btnDismiss.onclick = () => handleResolve(r.report_id, r.message_id, 'ignore');
     }
 
     container.appendChild(clone);
   });
 }
 
-// ── Xử lý report ─────────────────────────────────────
+// ── Xử lý hành động của mod trên report ──────────────
 
 async function handleResolve(reportId, messageId, action) {
   if (action === 'delete') {
@@ -163,7 +196,7 @@ async function handleResolve(reportId, messageId, action) {
   }
 
   try {
-    const res = await fetch('/api/moderator/resolve-report', {
+    const res = await fetch(`${API}/api/moderator/resolve-report`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
@@ -181,9 +214,12 @@ async function handleResolve(reportId, messageId, action) {
       return;
     }
 
-    showToast(action === 'delete' ? '✓ Post deleted and report resolved.' : '✓ Report dismissed.');
+    showToast(action === 'delete'
+      ? '✓ Post deleted and report resolved.'
+      : '✓ Report dismissed.'
+    );
 
-    // Reload để cập nhật danh sách
+    // Reload lại để cập nhật danh sách
     await loadReports();
     updateFilterCounts();
     populateReports();
@@ -194,7 +230,7 @@ async function handleResolve(reportId, messageId, action) {
   }
 }
 
-// ── Init ─────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────
 
 async function init() {
   if (!loadSession('moderator')) return;

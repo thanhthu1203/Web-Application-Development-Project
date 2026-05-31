@@ -103,6 +103,9 @@ async function loadThreads() {
     if (select) {
       select.innerHTML = '<option value="">-- Select Thread --</option>';
       THREADS.forEach(t => {
+        // THÊM DÒNG NÀY ĐỂ BỎ QUA THREAD ĐÃ KHÓA
+        if (t.is_locked) return; 
+
         const opt       = document.createElement('option');
         opt.value       = t.thread_id;
         opt.textContent = t.title;
@@ -309,56 +312,56 @@ function closeReportModal() {
 async function submitReport() {
   const selectedRadio = document.querySelector('input[name="reportReason"]:checked');
   if (!selectedRadio) {
-    showToast('⚠️ Please select a reason.');
+    showToast('Vui lòng chọn một lý do báo cáo.');
     return;
   }
 
   let reason = selectedRadio.value;
+  let custom_reason = null;
 
+  // Nếu chọn Other, tách riêng nội dung tự gõ vào custom_reason
   if (reason === 'Other') {
     const otherText = document.getElementById('reportOtherInput')?.value.trim();
     if (!otherText) {
-      showToast('⚠️ Please describe the issue.');
+      showToast('Vui lòng mô tả chi tiết vấn đề.');
       return;
     }
-    reason = otherText;
+    custom_reason = otherText;
   }
 
-  try {
-    const res = await fetch('/api/report', {
+  try { 
+    const res = await fetch(`${API}/api/report`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
         reporter_id: currentUserId,
         message_id:  reportTargetMessageId,
-        reason:      reason
+        reason:      reason,
+        custom_reason: custom_reason // Truyền rõ ràng custom_reason cho Backend
       })
     });
-
+    
     const data = await res.json();
-
     if (!res.ok) {
-      showToast('⚠️ ' + (data.message || 'Error submitting report.'));
+      showToast(data.message || 'Failed to submit report.');
       closeReportModal();
       return;
     }
 
-    // Thêm vào Set để nhớ đã report rồi
+    // Đánh dấu bài viết đã bị report ở phía User
     REPORTED_POST_IDS.add(reportTargetMessageId);
-
-    // Đổi nút Report thành "✓ Reported" trong DOM
+    
     const card = document.querySelector(`.post-card[data-msg-id="${reportTargetMessageId}"]`);
     if (card) {
       const btnReport = card.querySelector('.btn-report');
       if (btnReport) setReportedState(btnReport);
     }
-
-    showToast('✓ Report submitted. Thank you!');
+    
+    showToast('Report submitted!');
     closeReportModal();
-
   } catch (err) {
     console.error('Error submitting report:', err);
-    showToast('❌ Cannot connect to server.');
+    showToast('Cannot connect to server.');
   }
 }
 
@@ -589,25 +592,31 @@ async function postMessage() {
   const input    = document.getElementById('msgInput');
   const threadId = select ? select.value : null;
   const content  = input  ? input.value.trim() : '';
-
   if (!threadId) { showToast('⚠️ Please select a thread'); return; }
   if (!content)  { showToast('⚠️ Content cannot be empty'); return; }
-
+  
   try {
-    await fetch(`${API}/messages`, {
+    const res = await fetch(`${API}/messages`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ content, user_id: currentUserId, thread_id: parseInt(threadId), parent_id: null })
     });
+
+    // THÊM ĐOẠN CHECK NÀY ĐỂ BẮT LỖI TỪ BACKEND
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || 'Cannot post message');
+    }
+
     showToast('✓ Post submitted!');
     if (input) input.value = '';
     await loadMessages();
     populateMessages();
   } catch (err) {
-    showToast('❌ Cannot post message');
+    // SẼ HIỆN THÔNG BÁO LỖI (VÍ DỤ: THIS THREAD IS LOCKED) TỪ BACKEND
+    showToast('❌ ' + err.message);
   }
 }
-
 // ── Edit / Delete ─────────────────────────────────────
 
 async function handleEditPost(messageId, originalContent) {

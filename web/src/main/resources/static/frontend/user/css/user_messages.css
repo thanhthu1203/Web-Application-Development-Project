@@ -1,12 +1,26 @@
-/* giữ nguyên các css cũ của bài viết */
+/* user_messages.css */
+/* các css giữ nguyên, chỉ sửa lại id và class cho đúng html */
 .meta-dot-divider { margin: 0 4px; color: var(--text-dim); }
 .post-owner-actions { display: flex; gap: 4px; margin-left: auto; }
-.messages-list { display: flex; flex-direction: column; gap: 12px; max-width: 680px; margin: 0 auto; }
-.compose-card { max-width: 680px; margin: 0 auto 8px; padding: 12px 16px; }
-.compose-card .compose-header { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
-.compose-card .compose-input { border-radius: 20px; background: var(--bg); padding: 10px 16px; font-size: 14px; }
-.compose-card .compose-actions { display: flex; gap: 10px; align-items: center; }
-.compose-card select { flex: 1; margin-bottom: 0; border-radius: 8px; }
+
+#messagesList { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+  max-width: 680px; 
+  margin: 0 auto; 
+}
+
+.compose-card-wrapper { 
+  max-width: 680px; 
+  margin: 0 auto 16px; 
+  padding: 12px 16px; 
+}
+
+.compose-card-wrapper .compose-header { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.compose-card-wrapper .compose-input { border-radius: 20px; background: var(--bg); padding: 10px 16px; font-size: 14px; }
+.compose-card-wrapper .compose-actions { display: flex; gap: 10px; align-items: center; }
+.compose-card-wrapper select { flex: 1; margin-bottom: 0; border-radius: 8px; }
 
 .post-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
 .post-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
@@ -28,7 +42,6 @@
 .reaction-count { font-size: 11px; color: var(--text-muted); }
 .btn-action-comment { margin-left: auto; background: transparent; border: 1px solid var(--border); padding: 4px 12px; border-radius: 16px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
 .btn-action-comment:hover { background: var(--bg-hover); color: var(--text); }
-
 .comments-section { padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .no-comments, .loading-comments { font-size: 13px; color: var(--text-muted); text-align: center; padding: 12px 0; }
 .comment-thread-item { display: flex; flex-direction: column; }
@@ -47,16 +60,7 @@
 .btn-reply-link:hover { color: var(--primary); }
 .btn-reply-link.danger:hover { color: var(--danger); }
 .reply-box { display: flex; gap: 8px; align-items: center; margin-top: 6px; margin-left: 4px; }
-
-/* thu ngắn khung comment và căn giữa theo đúng yêu cầu */
-.comment-compose { 
-    display: flex; 
-    gap: 8px; 
-    align-items: center; 
-    margin: 10px auto 0; 
-    max-width: 600px; 
-    justify-content: center; 
-}
+.comment-compose { display: flex; gap: 8px; align-items: center; margin-top: 10px; max-width: 680px; justify-content: flex-start; }
 .comment-input-wrap { flex: 1; display: flex; align-items: center; background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 0 8px 0 14px; transition: border-color 0.15s; }
 .comment-input-wrap:focus-within { border-color: var(--primary); }
 .comment-input { flex: 1; border: none; background: transparent; outline: none; font-size: 13px; padding: 8px 0; font-family: inherit; }
@@ -65,54 +69,3 @@
 .btn-send:hover { transform: scale(1.2); }
 .btn-send.small { font-size: 13px; }
 .nested-comments-container { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-
-/* phần css cho modal báo cáo */
-/* .modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-} */
-/* .modal-container {
-    background: #fff;
-    width: 400px;
-    max-width: 90%;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-} */
-/* .modal-title {
-    margin-top: 0;
-    margin-bottom: 16px;
-    font-size: 18px;
-    color: var(--text);
-} */
-/* .modal-label {
-    font-size: 13px;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 6px;
-} */
-/* .modal-select, .modal-textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px; 
-    font-size: 13px;
-    outline: none;
-    font-family: inherit;
-    box-sizing: border-box;
-    margin-bottom: 16px;
-}*/
-/* .modal-textarea {
-    resize: vertical;
-    margin-bottom: 20px;
-}
-/* .modal-actions { 
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}*/
