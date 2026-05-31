@@ -6,6 +6,7 @@
   <title>Messages — Forum HCMIU</title>
   <link rel="stylesheet" href="../user/css/user_messages.css"/>
   <link rel="stylesheet" href="../user/css/user.css"/>
+  <link rel="stylesheet" href="../user/css/report_modal.css"/>
   <link rel="stylesheet" href="../css/theme.css">
 </head>
 <body>
@@ -53,9 +54,9 @@
         <div class="page-title">Posts</div>
         <div class="page-desc">All posts in the forum</div>
         <div class="perm-banner user">ℹ️ You are <strong>User</strong> — read posts, create posts, subscribe to threads.</div>
-        
+
         <div id="messagesList"></div>
-        
+
         <div class="card compose-card-wrapper">
           <div class="card-title">Create New Post</div>
           <select id="threadSelect"></select>
@@ -69,6 +70,57 @@
   </div>
 </div>
 
+<!-- =============================================
+     Modal Report
+     ============================================= -->
+<div class="report-modal-overlay" id="reportModalOverlay">
+  <div class="report-modal">
+    <div class="report-modal-header">
+      <span class="report-modal-title">🚩 Report Post</span>
+      <button class="report-modal-close" onclick="closeReportModal()">✕</button>
+    </div>
+
+    <!-- Preview nội dung bài bị report -->
+    <div class="report-post-preview" id="reportPostPreview"></div>
+
+    <!-- Danh sách lý do sẵn có -->
+    <label class="report-modal-label">Select a reason:</label>
+    <div class="report-reasons-grid">
+      <label class="reason-option">
+        <input type="radio" name="reportReason" value="Spam"> Spam
+      </label>
+      <label class="reason-option">
+        <input type="radio" name="reportReason" value="Hate speech"> Hate speech
+      </label>
+      <label class="reason-option">
+        <input type="radio" name="reportReason" value="Harassment"> Harassment
+      </label>
+      <label class="reason-option">
+        <input type="radio" name="reportReason" value="Misinformation"> Misinformation
+      </label>
+      <label class="reason-option">
+        <input type="radio" name="reportReason" value="Inappropriate content"> Inappropriate
+      </label>
+      <label class="reason-option">
+        <input type="radio" name="reportReason" value="Other"> Other
+      </label>
+    </div>
+
+    <!-- Ô nhập lý do khi chọn Other -->
+    <textarea
+      class="report-other-input"
+      id="reportOtherInput"
+      placeholder="Please describe the issue..."
+    ></textarea>
+
+    <div class="report-modal-footer">
+      <button class="btn" onclick="closeReportModal()">Cancel</button>
+      <button class="btn danger" onclick="submitReport()">Submit Report</button>
+    </div>
+  </div>
+</div>
+
+<!-- Template: post card -->
 <template id="tpl-post-card">
   <div class="post-card">
     <div class="post-header">
@@ -81,9 +133,14 @@
           <span class="thread-badge"></span>
         </div>
       </div>
+      <!-- Bài của mình: Edit + Delete -->
       <div class="post-owner-actions" style="display:none;">
         <button class="btn-icon btn-edit" title="Edit">✏️ Edit</button>
         <button class="btn-icon danger btn-delete" title="Delete">🗑️ Delete</button>
+      </div>
+      <!-- Bài của người khác: Report -->
+      <div class="post-report-action" style="display:none;">
+        <button class="btn-icon btn-report" title="Report this post">🚩 Report</button>
       </div>
     </div>
     <div class="post-content"></div>
@@ -108,6 +165,7 @@
   </div>
 </template>
 
+<!-- Template: comment item -->
 <template id="tpl-comment-item">
   <div class="comment-thread-item">
     <div class="comment-row">
@@ -119,8 +177,8 @@
         </div>
         <div class="comment-meta-row">
           <span class="comment-time"></span>
-          <button class="btn-reply-link btn-reply-toggle " style="display:none;">Reply</button>
-          <button class="btn-reply-link btn-edit-comment " style="display:none;">Edit</button>
+          <button class="btn-reply-link btn-reply-toggle" style="display:none;">Reply</button>
+          <button class="btn-reply-link btn-edit-comment" style="display:none;">Edit</button>
           <button class="btn-reply-link danger btn-delete-comment" style="display:none;">Delete</button>
         </div>
         <div class="reply-box" style="display:none;">
@@ -136,6 +194,7 @@
   </div>
 </template>
 
+<!-- Template: reaction button -->
 <template id="tpl-reaction-btn">
   <button class="reaction-btn">
     <span class="emoji-icon"></span> <span class="reaction-count"></span>

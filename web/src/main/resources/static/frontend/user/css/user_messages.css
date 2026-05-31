@@ -1,353 +1,118 @@
-/* Styling dấu chấm chia cách trong post meta */
-.meta-dot-divider {
-  margin: 0 4px;
-  color: var(--text-dim);
-}
+/* giữ nguyên các css cũ của bài viết */
+.meta-dot-divider { margin: 0 4px; color: var(--text-dim); }
+.post-owner-actions { display: flex; gap: 4px; margin-left: auto; }
+.messages-list { display: flex; flex-direction: column; gap: 12px; max-width: 680px; margin: 0 auto; }
+.compose-card { max-width: 680px; margin: 0 auto 8px; padding: 12px 16px; }
+.compose-card .compose-header { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.compose-card .compose-input { border-radius: 20px; background: var(--bg); padding: 10px 16px; font-size: 14px; }
+.compose-card .compose-actions { display: flex; gap: 10px; align-items: center; }
+.compose-card select { flex: 1; margin-bottom: 0; border-radius: 8px; }
 
-/* Ẩn hiện các hành động mặc định */
-.post-owner-actions {
-  display: flex; /* Sẽ được JS ghi đè khi cần hiện */
-  gap: 4px;
-  margin-left: auto;
-}
-
-/* Feed container */
-.messages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 680px;
-  margin: 0 auto;
-}
-
-/* Compose card */
-.compose-card {
-  max-width: 680px;
-  margin: 0 auto 8px;
-  padding: 12px 16px;
-}
-
-.compose-card .compose-header {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.compose-card .compose-input {
-  border-radius: 20px;
-  background: var(--bg);
-  padding: 10px 16px;
-  font-size: 14px;
-}
-
-.compose-card .compose-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.compose-card select {
-  flex: 1;
-  margin-bottom: 0;
-  border-radius: 8px;
-}
-
-/* Post card */
-/* Sửa lại class post-card để tạo box trắng */
-.post-card {
-  background: var(--bg-card); /* Tạo nền trắng */
-  border: 1px solid var(--border); /* Viền xám nhạt */
-  border-radius: var(--radius-lg); /* Bo góc 16px */
-  padding: 16px;
-  margin-bottom: 16px; /* Khoảng cách giữa các post */
-  box-shadow: var(--shadow-sm); /* Thêm chút bóng mờ cho nổi bật */
-}
-
-.post-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.post-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 15px;
-  flex-shrink: 0;
-}
-
+.post-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
+.post-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
 .post-info { flex: 1; }
 .post-author { font-weight: 700; font-size: 14px; color: var(--text); }
-.post-meta   { font-size: 12px; color: var(--text-muted); }
-
-.post-owner-actions {
-  display: flex;
-  gap: 4px;
-  margin-left: auto;
-}
-
-/*  CSS cho cái tag hiển thị Chủ đề */
-.thread-badge {
-  display: inline-flex;
-  align-items: center;
-  background: var(--primary-light);
-  color: var(--primary-text);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  vertical-align: middle;
-}
-
-.btn-icon {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  transition: background 0.15s;
-}
-.btn-icon:hover         { background: var(--bg-hover); }
-.btn-icon.danger:hover  { background: var(--danger-bg); }
-
-.post-content {
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--text);
-  margin-bottom: 10px;
-  word-break: break-word;
-}
-
-.post-stats {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--text-muted);
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-/* Reaction bar */
-.post-actions-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-}
-
-.emoji-row {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.reaction-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: transparent;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
+.post-meta { font-size: 12px; color: var(--text-muted); }
+.thread-badge { display: inline-flex; align-items: center; background: var(--primary-light); color: var(--primary-text); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; vertical-align: middle; }
+.btn-icon { background: transparent; border: none; cursor: pointer; font-size: 14px; padding: 4px 6px; border-radius: 6px; transition: background 0.15s; }
+.btn-icon:hover { background: var(--bg-hover); }
+.btn-icon.danger:hover { background: var(--danger-bg); }
+.post-content { font-size: 15px; line-height: 1.55; color: var(--text); margin-bottom: 10px; word-break: break-word; }
+.post-stats { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.post-actions-bar { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.emoji-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.reaction-btn { display: inline-flex; align-items: center; gap: 3px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 16px; background: transparent; cursor: pointer; font-size: 13px; transition: all 0.15s; white-space: nowrap; }
 .reaction-btn:hover { background: var(--primary-light); border-color: var(--primary); }
 .reaction-btn.active { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
 .reaction-count { font-size: 11px; color: var(--text-muted); }
-
-.btn-action-comment {
-  margin-left: auto;
-  background: transparent;
-  border: 1px solid var(--border);
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-}
+.btn-action-comment { margin-left: auto; background: transparent; border: 1px solid var(--border); padding: 4px 12px; border-radius: 16px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
 .btn-action-comment:hover { background: var(--bg-hover); color: var(--text); }
 
-/* ── Comments section ─────────────────────────────── */
-.comments-section {
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.no-comments, .loading-comments {
-  font-size: 13px;
-  color: var(--text-muted);
-  text-align: center;
-  padding: 12px 0;
-}
-
-/* Comment thread item */
-.comment-thread-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.comment-nested {
-  margin-left: 44px;   /* indent for replies */
-}
-
-.comment-row {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  margin-bottom: 2px;
-}
-
-/* Small avatars */
-.comment-avatar-sm {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--primary-light);
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 11px;
-  flex-shrink: 0;
-}
+.comments-section { padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.no-comments, .loading-comments { font-size: 13px; color: var(--text-muted); text-align: center; padding: 12px 0; }
+.comment-thread-item { display: flex; flex-direction: column; }
+.comment-nested { margin-left: 44px; }
+.comment-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 2px; }
+.comment-avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; }
 .comment-avatar-sm.nested { width: 28px; height: 28px; font-size: 10px; }
-.comment-avatar-sm.small  { width: 24px; height: 24px; font-size: 10px; }
-
-/* Comment bubble */
+.comment-avatar-sm.small { width: 24px; height: 24px; font-size: 10px; }
 .comment-bubble-wrap { flex: 1; }
-
-.comment-bubble {
-  display: inline-block;
-  background: var(--bg);
-  border-radius: 18px;
-  padding: 8px 14px;
-  max-width: 100%;
-  word-break: break-word;
-}
-
-.comment-author {
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--text);
-  display: block;
-  margin-bottom: 2px;
-}
-
-.comment-text {
-  font-size: 14px;
-  color: var(--text);
-  line-height: 1.45;
-}
-
-.comment-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 4px;
-  padding-left: 4px;
-}
-
-.comment-time {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.btn-reply-link {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.12s;
-}
-.btn-reply-link:hover       { color: var(--primary); }
+.comment-bubble { display: inline-block; background: var(--bg); border-radius: 18px; padding: 8px 14px; max-width: 100%; word-break: break-word; }
+.comment-author { font-weight: 700; font-size: 13px; color: var(--text); display: block; margin-bottom: 2px; }
+.comment-text { font-size: 14px; color: var(--text); line-height: 1.45; }
+.comment-meta-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; padding-left: 4px; }
+.comment-time { font-size: 11px; color: var(--text-muted); }
+.btn-reply-link { font-size: 12px; font-weight: 700; color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 0; transition: color 0.12s; }
+.btn-reply-link:hover { color: var(--primary); }
 .btn-reply-link.danger:hover { color: var(--danger); }
+.reply-box { display: flex; gap: 8px; align-items: center; margin-top: 6px; margin-left: 4px; }
 
-/* Reply input box */
-.reply-box {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 6px;
-  margin-left: 4px;
+/* thu ngắn khung comment và căn giữa theo đúng yêu cầu */
+.comment-compose { 
+    display: flex; 
+    gap: 8px; 
+    align-items: center; 
+    margin: 10px auto 0; 
+    max-width: 600px; 
+    justify-content: center; 
 }
-
-/* Comment compose at bottom of post */
-.comment-compose {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.comment-input-wrap {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 0 8px 0 14px;
-  transition: border-color 0.15s;
-}
+.comment-input-wrap { flex: 1; display: flex; align-items: center; background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 0 8px 0 14px; transition: border-color 0.15s; }
 .comment-input-wrap:focus-within { border-color: var(--primary); }
-
-.comment-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 13px;
-  padding: 8px 0;
-  font-family: inherit;
-}
+.comment-input { flex: 1; border: none; background: transparent; outline: none; font-size: 13px; padding: 8px 0; font-family: inherit; }
 .comment-input.small { font-size: 12px; padding: 6px 0; }
-
-.btn-send {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: var(--primary);
-  padding: 4px;
-  transition: transform 0.1s;
-}
+.btn-send { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--primary); padding: 4px; transition: transform 0.1s; }
 .btn-send:hover { transform: scale(1.2); }
 .btn-send.small { font-size: 13px; }
+.nested-comments-container { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 
-/* Nested comments container */
-.nested-comments-container {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+/* phần css cho modal báo cáo */
+/* .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+} */
+/* .modal-container {
+    background: #fff;
+    width: 400px;
+    max-width: 90%;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+} */
+/* .modal-title {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: var(--text);
+} */
+/* .modal-label {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+} */
+/* .modal-select, .modal-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px; 
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+}*/
+/* .modal-textarea {
+    resize: vertical;
+    margin-bottom: 20px;
 }
-
-/*  fix lỗi dính chữ */
-.nested-comments-container { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 8px; 
-  margin-top: 8px; 
-}
+/* .modal-actions { 
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}*/

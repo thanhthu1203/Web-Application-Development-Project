@@ -1,0 +1,238 @@
+/* mod_reports.css — styles cho trang Manage Reports */
+
+/* ── Thanh filter ── */
+.report-filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.report-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.report-filter-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.report-filter-btn.active {
+  background: var(--mod-bg-light);
+  color: var(--mod-text-dark);
+  border-color: var(--mod-border);
+}
+
+/* Số lượng bên cạnh filter */
+.filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 99px;
+  background: var(--border);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.report-filter-btn.active .filter-count {
+  background: var(--mod-border);
+  color: var(--mod-text-dark);
+}
+
+/* ── Report card ── */
+.report-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.report-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Card đã xử lý thì hơi mờ đi */
+.report-card.is-resolved,
+.report-card.is-dismissed {
+  opacity: 0.75;
+}
+
+/* ── Header của card ── */
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.report-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.report-id {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  font-family: monospace;
+  background: var(--bg);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.report-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Badge trạng thái */
+.report-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1.5px solid;
+}
+
+.report-status-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fcd34d;
+}
+
+.report-status-badge.resolved {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #6ee7b7;
+}
+
+.report-status-badge.dismissed {
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+/* ── Box nội dung bài bị report ── */
+.report-post-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--danger);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 12px 14px;
+  margin-bottom: 1rem;
+}
+
+.report-post-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.report-post-author {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.report-post-thread {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.report-post-content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  word-break: break-word;
+  max-height: 80px;
+  overflow: hidden;
+}
+
+/* Khi bài đã bị xóa */
+.report-post-content.is-deleted {
+  text-decoration: line-through;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ── Row thông tin ── */
+.report-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 1rem;
+}
+
+.report-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.report-info-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.report-reason {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.report-reporter {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.report-resolver {
+  font-size: 13px;
+  color: var(--success);
+  font-weight: 600;
+}
+
+.report-resolved-at {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ── Nút hành động ── */
+.report-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}

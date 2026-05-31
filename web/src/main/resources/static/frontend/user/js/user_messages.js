@@ -1,11 +1,15 @@
-/*
- DOM manipulation & logic
-*/
+// user_messages.js — DOM manipulation & logic
 
 let ALL_MESSAGES      = [];
 let THREADS           = [];
-let currentDetailMessageId = null;
 let currentThreadId   = null;
+
+// Lưu các message_id mà user hiện tại đã report
+let REPORTED_POST_IDS = new Set();
+
+// Lưu state của report modal
+let reportTargetMessageId      = null;
+let reportTargetMessageContent = null;
 
 const EMOJI_LIST = ['👍', '❤️', '😂', '😢', '😡'];
 
@@ -25,7 +29,6 @@ function formatDate(date) {
   return date.toLocaleDateString('en-US');
 }
 
-// Hàm hiển thị "Edited at [time]" nếu message được edit
 function formatEditedTime(lastEditedAt) {
   if (!lastEditedAt || lastEditedAt === 'null' || lastEditedAt === '') return '';
   try {
@@ -42,7 +45,6 @@ function formatEditedTime(lastEditedAt) {
   }
 }
 
-// Hàm lấy tên hiển thị của người dùng hiện tại
 function getCurrentUserDisplayName() {
   try {
     const raw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
@@ -114,6 +116,21 @@ async function loadThreads() {
   }
 }
 
+// Lấy danh sách các post mà user hiện tại đã report
+async function loadMyReportedPosts() {
+  try {
+    const ids = await fetch(`${API}/api/user/my-reports?user_id=${currentUserId}`)
+      .then(r => r.json());
+
+    if (Array.isArray(ids)) {
+      REPORTED_POST_IDS = new Set(ids);
+    }
+  } catch (err) {
+    // Không critical, trang vẫn hoạt động được
+    console.warn('Could not load reported posts:', err);
+  }
+}
+
 // ── Feed rendering ────────────────────────────────────
 
 function populateMessages() {
@@ -144,7 +161,7 @@ function buildPostCard(msg) {
   const threadTitle = thread ? thread.title : 'General Thread';
 
   // Hiển thị avatar tác giả
-  const avatarEl  = card.querySelector('.post-avatar');
+  const avatarEl   = card.querySelector('.post-avatar');
   const postAvatar = msg.is_own_message ? window.currentUserAvatar : msg.author_avatar;
   if (postAvatar) {
     avatarEl.innerHTML = `<img src="${postAvatar}" alt="Avatar"
@@ -158,14 +175,14 @@ function buildPostCard(msg) {
   const dateEl     = card.querySelector('.meta-date');
   const postedText = formatDate(new Date(msg.posted_date));
   const editedText = msg.last_edited_at ? ` ${formatEditedTime(msg.last_edited_at)}` : '';
-  dateEl.textContent  = postedText + editedText;
+  dateEl.textContent    = postedText + editedText;
   dateEl.style.fontSize = '0.85em';
 
   card.querySelector('.thread-badge').textContent = `📌 ${threadTitle}`;
   card.querySelector('.post-content').textContent = msg.content;
 
-  // Chỉ hiển thị nút edit/delete nếu là bài của mình
   if (msg.is_own_message) {
+    // Bài của mình: hiện Edit + Delete, ẩn Report
     const ownerActions = card.querySelector('.post-owner-actions');
     if (ownerActions) {
       ownerActions.style.display = 'flex';
@@ -173,6 +190,22 @@ function buildPostCard(msg) {
       const btnDelete = ownerActions.querySelector('.btn-delete');
       if (btnEdit)   btnEdit.onclick   = () => handleEditPost(msg.message_id, msg.content);
       if (btnDelete) btnDelete.onclick = () => handleDeletePost(msg.message_id);
+    }
+  } else {
+    // Bài của người khác: hiện Report, ẩn Edit + Delete
+    const reportAction = card.querySelector('.post-report-action');
+    if (reportAction) {
+      reportAction.style.display = 'flex';
+      const btnReport = reportAction.querySelector('.btn-report');
+      if (btnReport) {
+        if (REPORTED_POST_IDS.has(msg.message_id)) {
+          // Đã report rồi: hiện trạng thái "Reported"
+          setReportedState(btnReport);
+        } else {
+          // Chưa report: gắn onclick
+          btnReport.onclick = () => openReportModal(msg.message_id, msg.content);
+        }
+      }
     }
   }
 
@@ -214,6 +247,125 @@ function buildPostCard(msg) {
 
   return card;
 }
+
+// ── Hàm đổi nút Report thành trạng thái đã reported ──
+
+function setReportedState(btnEl) {
+  btnEl.textContent  = '✓ Reported';
+  btnEl.disabled     = true;
+  btnEl.classList.add('reported');
+  btnEl.onclick      = null;
+}
+
+// ── Report modal ──────────────────────────────────────
+
+function openReportModal(messageId, messageContent) {
+  reportTargetMessageId      = messageId;
+  reportTargetMessageContent = messageContent;
+
+  // Hiện preview bài bị report
+  const previewEl = document.getElementById('reportPostPreview');
+  if (previewEl) previewEl.textContent = messageContent || '';
+
+  // Reset form
+  document.querySelectorAll('input[name="reportReason"]').forEach(r => {
+    r.checked = false;
+  });
+  document.querySelectorAll('.reason-option').forEach(opt => {
+    opt.classList.remove('selected');
+  });
+  const otherInput = document.getElementById('reportOtherInput');
+  if (otherInput) {
+    otherInput.value = '';
+    otherInput.classList.remove('show');
+  }
+
+  // Gắn sự kiện cho radio buttons
+  document.querySelectorAll('input[name="reportReason"]').forEach(radio => {
+    radio.onchange = () => {
+      document.querySelectorAll('.reason-option').forEach(opt => opt.classList.remove('selected'));
+      radio.closest('.reason-option').classList.add('selected');
+
+      const otherEl = document.getElementById('reportOtherInput');
+      if (radio.value === 'Other') {
+        otherEl.classList.add('show');
+        otherEl.focus();
+      } else {
+        otherEl.classList.remove('show');
+        otherEl.value = '';
+      }
+    };
+  });
+
+  document.getElementById('reportModalOverlay').classList.add('show');
+}
+
+function closeReportModal() {
+  document.getElementById('reportModalOverlay').classList.remove('show');
+  reportTargetMessageId      = null;
+  reportTargetMessageContent = null;
+}
+
+async function submitReport() {
+  const selectedRadio = document.querySelector('input[name="reportReason"]:checked');
+  if (!selectedRadio) {
+    showToast('⚠️ Please select a reason.');
+    return;
+  }
+
+  let reason = selectedRadio.value;
+
+  if (reason === 'Other') {
+    const otherText = document.getElementById('reportOtherInput')?.value.trim();
+    if (!otherText) {
+      showToast('⚠️ Please describe the issue.');
+      return;
+    }
+    reason = otherText;
+  }
+
+  try {
+    const res = await fetch('/api/report', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        reporter_id: currentUserId,
+        message_id:  reportTargetMessageId,
+        reason:      reason
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast('⚠️ ' + (data.message || 'Error submitting report.'));
+      closeReportModal();
+      return;
+    }
+
+    // Thêm vào Set để nhớ đã report rồi
+    REPORTED_POST_IDS.add(reportTargetMessageId);
+
+    // Đổi nút Report thành "✓ Reported" trong DOM
+    const card = document.querySelector(`.post-card[data-msg-id="${reportTargetMessageId}"]`);
+    if (card) {
+      const btnReport = card.querySelector('.btn-report');
+      if (btnReport) setReportedState(btnReport);
+    }
+
+    showToast('✓ Report submitted. Thank you!');
+    closeReportModal();
+
+  } catch (err) {
+    console.error('Error submitting report:', err);
+    showToast('❌ Cannot connect to server.');
+  }
+}
+
+// Đóng modal khi click ra ngoài
+document.getElementById('reportModalOverlay')?.addEventListener('click', function (e) {
+  if (e.target === this) closeReportModal();
+});
 
 // ── Comments ──────────────────────────────────────────
 
@@ -260,7 +412,6 @@ async function loadAndRenderComments(messageId) {
   }
 }
 
-// Hàm render comment - dùng đúng template tpl-comment-item trong HTML
 function renderNestedComments(parentEl, comments, rootPostId) {
   parentEl.innerHTML = '';
 
@@ -269,13 +420,10 @@ function renderNestedComments(parentEl, comments, rootPostId) {
     return;
   }
 
-  // Lấy các comment cấp 1 (trực tiếp reply post gốc)
   const topLevelComments = comments.filter(c => c.parent_id === rootPostId);
-
   const tpl = document.getElementById('tpl-comment-item');
   if (!tpl) {
     console.error('Template tpl-comment-item not found');
-    parentEl.innerHTML = '<div class="loading-comments">❌ Template error</div>';
     return;
   }
 
@@ -285,13 +433,11 @@ function renderNestedComments(parentEl, comments, rootPostId) {
   });
 }
 
-// Hàm tạo 1 comment item từ template tpl-comment-item
 function buildCommentItem(c, allComments, rootPostId) {
   const tpl   = document.getElementById('tpl-comment-item');
   const clone = tpl.content.cloneNode(true);
   const commentId = c.message_id;
 
-  // Tìm wrapper chính
   const wrapper = clone.querySelector('.comment-thread-item');
   if (!wrapper) return null;
 
@@ -306,15 +452,12 @@ function buildCommentItem(c, allComments, rootPostId) {
     }
   }
 
-  // Gán tên tác giả
   const authorEl = clone.querySelector('.comment-author');
   if (authorEl) authorEl.textContent = c.author_name;
 
-  // Gán nội dung comment
   const textEl = clone.querySelector('.comment-text');
   if (textEl) textEl.textContent = c.content;
 
-  // Gán thời gian (kèm edited nếu có)
   const timeEl = clone.querySelector('.comment-time');
   if (timeEl) {
     const postedText = formatDate(new Date(c.posted_date));
@@ -324,7 +467,6 @@ function buildCommentItem(c, allComments, rootPostId) {
     if (c.last_edited_at) timeEl.style.color = 'var(--text-dim)';
   }
 
-  // Hiện nút Reply
   const btnReply = clone.querySelector('.btn-reply-toggle');
   if (btnReply) {
     btnReply.style.display = 'inline-block';
@@ -340,7 +482,7 @@ function buildCommentItem(c, allComments, rootPostId) {
     };
   }
 
-  // Hiện nút Edit/Delete nếu là comment của mình
+  // Chỉ hiện Edit + Delete nếu là comment của mình
   const btnEdit   = clone.querySelector('.btn-edit-comment');
   const btnDelete = clone.querySelector('.btn-delete-comment');
   if (c.user_id === currentUserId) {
@@ -354,12 +496,10 @@ function buildCommentItem(c, allComments, rootPostId) {
     }
   }
 
-  // Thiết lập reply box
   const replyBox = clone.querySelector('.reply-box');
   if (replyBox) {
     replyBox.id = `reply-box-${commentId}`;
 
-    // Hiển thị avatar người dùng hiện tại trong reply box
     const replyAvatar = replyBox.querySelector('.current-user-avatar');
     if (replyAvatar) {
       if (window.currentUserAvatar) {
@@ -377,9 +517,7 @@ function buildCommentItem(c, allComments, rootPostId) {
     }
 
     const replyBtn = replyBox.querySelector('.btn-send');
-    if (replyBtn) {
-      replyBtn.onclick = () => submitReply(commentId, rootPostId);
-    }
+    if (replyBtn) replyBtn.onclick = () => submitReply(commentId, rootPostId);
   }
 
   // Render các reply lồng nhau (cấp 2)
@@ -556,7 +694,7 @@ function updateReactionCounts(messageId, reactions) {
   const row = document.getElementById(`emoji-row-${messageId}`);
   if (!row) return;
 
-  const counts     = {};
+  const counts      = {};
   const userReacted = {};
 
   reactions.forEach(r => {
@@ -586,12 +724,19 @@ function updateReactionCounts(messageId, reactions) {
   }
 }
 
+// ── Init ──────────────────────────────────────────────
+
 async function init() {
   if (!loadSession('user')) return;
   renderTopbar();
 
-  await loadThreads();
-  await loadMessages();
+  // Load song song để nhanh hơn
+  await Promise.all([
+    loadThreads(),
+    loadMessages(),
+    loadMyReportedPosts()
+  ]);
+
   populateMessages();
 
   const urlParams    = new URLSearchParams(window.location.search);

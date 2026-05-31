@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="../css/theme.css">
 </head>
 <body>
+
 <div id="forumScreen" class="forum-layout" style="display: flex;">
   <header class="topbar">
     <div class="topbar-left">
@@ -30,11 +31,24 @@
     <aside class="sidebar">
       <nav class="sidebar-nav" id="sidebarNav">
         <div class="sidebar-label">Moderator Menu</div>
-        <div class="nav-item" data-tab="threads" onclick="window.location.href='mod_threads.html'"><span class="nav-icon">◫</span>Manage Threads</div>
-        <div class="nav-item" data-tab="messages" onclick="window.location.href='mod_messages.html'"><span class="nav-icon">✉</span>Manage Messages</div>
-        <div class="nav-item" data-tab="manage-users" onclick="window.location.href='manage_users.html'"><span class="nav-icon">◉</span>Ban/Unban Users</div>
-        <div class="nav-item" data-tab="ban-history" onclick="window.location.href='ban_history.html'"><span class="nav-icon">⊘</span>Ban History</div>
-        <div class="nav-item active" data-tab="profile" onclick="window.location.href='mod_profile.html'"><span class="nav-icon">👤</span>Profile</div>
+        <div class="nav-item" data-tab="threads" onclick="window.location.href='mod_threads.html'">
+          <span class="nav-icon">◫</span>Manage Threads
+        </div>
+        <div class="nav-item" data-tab="messages" onclick="window.location.href='mod_messages.html'">
+          <span class="nav-icon">✉</span>Manage Messages
+        </div>
+        <div class="nav-item" data-tab="manage-users" onclick="window.location.href='manage_users.html'">
+          <span class="nav-icon">◉</span>Ban/Unban Users
+        </div>
+        <div class="nav-item" data-tab="ban-history" onclick="window.location.href='ban_history.html'">
+          <span class="nav-icon">⊘</span>Ban History
+        </div>
+        <div class="nav-item" data-tab="manage-reports" onclick="window.location.href='mod_reports.html'">
+          <span class="nav-icon">🚩</span>Manage Reports
+        </div>
+        <div class="nav-item active" data-tab="profile" onclick="window.location.href='mod_profile.html'">
+          <span class="nav-icon">👤</span>Profile
+        </div>
       </nav>
     </aside>
 
@@ -44,7 +58,7 @@
         <div class="page-desc">Your account information</div>
         <div class="card" style="max-width:520px">
           <div class="card-title">Profile Information</div>
-          
+
           <div class="avatar-section">
             <label>Profile Picture</label>
             <div class="avatar-row">
@@ -60,7 +74,6 @@
             <label>Username</label>
             <input id="pf-username" placeholder="Username" class="compose-input" style="width: 100%;">
           </div>
-
           <div class="form-group" style="margin-bottom: 1rem;">
             <label>First Name</label>
             <input id="pf-first" placeholder="First Name" class="compose-input" style="width: 100%;">
@@ -93,7 +106,9 @@
     </main>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script src="../js/common.js"></script>
 <script src="../js/page_router.js"></script>
 <script>window.__ACTIVE_TAB__ = 'profile';</script>

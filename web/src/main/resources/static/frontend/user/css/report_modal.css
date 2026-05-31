@@ -1,0 +1,187 @@
+/* report_modal.css — styles cho modal report bài vi phạm (user side) */
+
+/* ── Overlay nền tối ── */
+.report-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.report-modal-overlay.show {
+  display: flex;
+}
+
+/* ── Modal box ── */
+.report-modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: modalIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Header ── */
+.report-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.report-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.report-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--text-muted);
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all var(--transition);
+  line-height: 1;
+  font-family: inherit;
+}
+
+.report-modal-close:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+/* ── Preview nội dung bài bị report ── */
+.report-post-preview {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--danger);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 12px;
+  margin-bottom: 1.25rem;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  /* Giới hạn 3 dòng */
+  display: -webkit-box;
+  max-height: 4.5em;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-style: italic;
+}
+
+/* ── Label ── */
+.report-modal-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+/* ── Grid các lý do ── */
+.report-reasons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.reason-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: all var(--transition);
+  user-select: none;
+  background: var(--bg);
+  font-family: inherit;
+}
+
+.reason-option:hover {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.reason-option.selected {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.reason-option input[type="radio"] {
+  accent-color: var(--danger);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Textarea lý do khác ── */
+.report-other-input {
+  display: none;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg-input);
+  outline: none;
+  transition: border-color var(--transition);
+  resize: vertical;
+  min-height: 70px;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+.report-other-input.show {
+  display: block;
+}
+
+.report-other-input:focus {
+  border-color: var(--danger);
+}
+
+/* ── Footer ── */
+.report-modal-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Trạng thái nút Report đã gửi ── */
+.btn-icon.btn-report.reported {
+  color: var(--text-muted) !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.btn-icon.btn-report.reported:hover {
+  background: transparent !important;
+}

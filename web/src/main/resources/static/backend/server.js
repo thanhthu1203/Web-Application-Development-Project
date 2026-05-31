@@ -242,6 +242,8 @@ require('./routes/modRoutes')(app, db, authenticateToken, authorizeRole);
 // User routes - user được access
 require('./routes/userRoutes')(app, db, authenticateToken);
 
+// Report routes - user, mod, admin được access (tùy endpoint)
+require('./routes/reportRoutes')(app, db);
 
 // error handling (phải ở cuối)
 

@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Messages — Moderator Portal — Forum HCMIU</title>
-  
-  <link rel="stylesheet" href="../css/index.css">  
+  <link rel="stylesheet" href="../css/index.css">
   <link rel="stylesheet" href="css/mod.css">
   <link rel="stylesheet" href="css/mod_messages.css">
   <link rel="stylesheet" href="../css/theme.css">
+  
 </head>
 <body class="bg-gray">
 
@@ -44,6 +44,9 @@
         <div class="nav-item" data-tab="ban-history" onclick="window.location.href='ban_history.html'">
           <span class="nav-icon">⊘</span>Ban History
         </div>
+        <div class="nav-item" data-tab="manage-reports" onclick="window.location.href='mod_reports.html'">
+          <span class="nav-icon">🚩</span>Manage Reports
+        </div>
         <div class="nav-item" data-tab="profile" onclick="window.location.href='mod_profile.html'">
           <span class="nav-icon">👤</span>Profile
         </div>
@@ -53,7 +56,7 @@
     <main class="main-content fb-feed-container" id="mainContent">
       <div id="page-messages" class="page-section">
         <div class="page-title">Manage posts & discussions</div>
-        <div class="page-desc">Moderator has the right to view, edit, and delete all posts and comments.</div>
+        <div class="page-desc">Moderator has the right to view and delete all posts and comments.</div>
 
         <div id="messagesList"></div>
 
@@ -70,6 +73,7 @@
   </div>
 </div>
 
+<!-- Template: post card — mod chỉ có Delete, không có Edit -->
 <template id="tpl-post-card">
   <div class="post-card">
     <div class="post-header">
@@ -83,7 +87,6 @@
         </div>
       </div>
       <div class="post-owner-actions">
-        <button class="btn-icon btn-edit" title="Edit">✏️ Edit</button>
         <button class="btn-icon danger btn-delete" title="Delete">🗑️ Delete</button>
       </div>
     </div>
@@ -109,6 +112,7 @@
   </div>
 </template>
 
+<!-- Template: comment item — mod chỉ có Delete, không có Edit -->
 <template id="tpl-comment-item">
   <div class="comment-thread-item">
     <div class="comment-row">
@@ -121,7 +125,6 @@
         <div class="comment-meta-row">
           <span class="comment-time"></span>
           <button class="btn-reply-link btn-reply-toggle" style="display:none;">Reply</button>
-          <button class="btn-reply-link btn-edit-comment">Edit</button>
           <button class="btn-reply-link danger btn-delete-comment">Delete</button>
         </div>
         <div class="reply-box" style="display:none;">
