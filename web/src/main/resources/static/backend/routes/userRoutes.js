@@ -348,12 +348,38 @@ app.post("/messages", (req, res) => {
 
   // subscribes & notifications
 
+  // subscribes & notifications
   app.post("/subscribe", (req, res) => {
     const { user_id, thread_id } = req.body;
-    db.query("INSERT INTO subscribes (user_id, thread_id) VALUES (?, ?)", [user_id, thread_id], (err) => {
-      if (err) return res.status(500).send(err);
-      res.json({ message: "Subscribed successfully." });
-    });
+
+    // 1. Kiểm tra xem thread có bị khóa không trước khi cho phép subscribe
+    db.query(
+      "SELECT is_locked FROM threads WHERE thread_id = ? LIMIT 1",
+      [thread_id],
+      (err, threads) => {
+        if (err) return res.status(500).send(err);
+        
+        // Nếu thread không tồn tại
+        if (threads.length === 0) {
+          return res.status(404).json({ message: "Thread not found." });
+        }
+        
+        // Nếu thread đã bị khóa
+        if (threads[0].is_locked === 1) {
+          return res.status(403).json({ message: "This thread is locked. You cannot subscribe." });
+        }
+
+        // 2. Nếu hợp lệ, tiến hành subscribe
+        db.query(
+          "INSERT INTO subscribes (user_id, thread_id) VALUES (?, ?)", 
+          [user_id, thread_id], 
+          (errInsert) => {
+            if (errInsert) return res.status(500).send(errInsert);
+            res.json({ message: "Subscribed successfully." });
+          }
+        );
+      }
+    );
   });
 
   app.delete("/subscribe", (req, res) => {
