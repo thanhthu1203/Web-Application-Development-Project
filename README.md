@@ -20,27 +20,134 @@ A full-stack forum web application with role-based access control for three user
 ## Project Structure
 
 ```
-Web-Application-Development-Project/
-├── package.json                  # Node.js dependencies
-├── web/                          # Spring Boot project
+WEB_PROJECT_1/
+│
+├── .github/
+├── node_modules/
+│
+├── web/
+│   │
+│   ├── .mvn/
+│   ├── .vscode/
+│   │
+│   ├── src/
+│   │   │
+│   │   ├── main/
+│   │   │   │
+│   │   │   ├── java/
+│   │   │   │
+│   │   │   ├── resources/
+│   │   │   │   │
+│   │   │   │   ├── static/
+│   │   │   │   │   │
+│   │   │   │   │   ├── backend/
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── config/
+│   │   │   │   │   │   │   └── database.js
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── middleware/
+│   │   │   │   │   │   │   ├── authentication.js
+│   │   │   │   │   │   │   ├── errorHandler.js
+│   │   │   │   │   │   │   └── validation.js
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── routes/
+│   │   │   │   │   │   │   ├── adminRoutes.js
+│   │   │   │   │   │   │   ├── modRoutes.js
+│   │   │   │   │   │   │   ├── reportRoutes.js
+│   │   │   │   │   │   │   └── userRoutes.js
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── utils/
+│   │   │   │   │   │   │   ├── dbHelper.js
+│   │   │   │   │   │   │   └── helpers.js
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── .env
+│   │   │   │   │   │   ├── db.js
+│   │   │   │   │   │   └── server.js
+│   │   │   │   │   │
+│   │   │   │   │   ├── frontend/
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── admin/
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── css/
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── js/
+│   │   │   │   │   │   │   │   ├── ad_system_settings.js
+│   │   │   │   │   │   │   │   ├── admin_profile.js
+│   │   │   │   │   │   │   │   └── manage_mods.js
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── admin_profile.html
+│   │   │   │   │   │   │   ├── manage_mods.html
+│   │   │   │   │   │   │   └── system_settings.html
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── mod/
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── css/
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── js/
+│   │   │   │   │   │   │   │   ├── ban_history.js
+│   │   │   │   │   │   │   │   ├── mod_manage_users.js
+│   │   │   │   │   │   │   │   ├── mod_messages.js
+│   │   │   │   │   │   │   │   ├── mod_profile.js
+│   │   │   │   │   │   │   │   ├── mod_reports.js
+│   │   │   │   │   │   │   │   └── mod_threads.js
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── ban_history.html
+│   │   │   │   │   │   │   ├── manage_users.html
+│   │   │   │   │   │   │   ├── mod_messages.html
+│   │   │   │   │   │   │   ├── mod_profile.html
+│   │   │   │   │   │   │   ├── mod_reports.html
+│   │   │   │   │   │   │   └── mod_threads.html
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── user/
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── css/
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── js/
+│   │   │   │   │   │   │   │   ├── user_messages.js
+│   │   │   │   │   │   │   │   ├── user_notifications.js
+│   │   │   │   │   │   │   │   ├── user_profile.js
+│   │   │   │   │   │   │   │   ├── user_subscribes.js
+│   │   │   │   │   │   │   │   └── user_threads.js
+│   │   │   │   │   │   │   │
+│   │   │   │   │   │   │   ├── user_messages.html
+│   │   │   │   │   │   │   ├── user_notifications.html
+│   │   │   │   │   │   │   ├── user_profile.html
+│   │   │   │   │   │   │   ├── user_subscribes.html
+│   │   │   │   │   │   │   └── user_threads.html
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── js/
+│   │   │   │   │   │   │   ├── common.js
+│   │   │   │   │   │   │   ├── login.js
+│   │   │   │   │   │   │   ├── page_router.js
+│   │   │   │   │   │   │   ├── report.js
+│   │   │   │   │   │   │   └── sign_up.js
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── index.html
+│   │   │   │   │   │   ├── login.html
+│   │   │   │   │   │   └── sign_up.html
+│   │   │   │   │   │
+│   │   │   │   │   ├── templates/
+│   │   │   │   │   │
+│   │   │   │   │   └── application.properties
+│   │   │   │
+│   │   │   └── test/
+│   │   │       └── java/com/example/web/
+│   │   │           └── WebApplicationTests.java
+│   │
+│   ├── target/
+│   │
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitattributes
+│   ├── .gitignore
+│   ├── HELP.md
+│   ├── mvnw
+│   ├── mvnw.cmd
 │   ├── pom.xml
-│   └── src/main/resources/static/
-│       ├── backend/
-│       │   ├── server.js         # Express server entry point
-│       │   ├── db.js             # MySQL connection
-│       │   └── routes/
-│       │       ├── userRoutes.js
-│       │       ├── modRoutes.js
-│       │       └── adminRoutes.js
-│       └── frontend/
-│           ├── index.html
-│           ├── login.html
-│           ├── sign_up.html
-│           ├── css/
-│           ├── js/
-│           ├── user/             # User pages
-│           ├── mod/              # Moderator pages
-│           └── admin/            # Admin pages
+│   ├── test-config.js
+│   ├── package-lock.json
+│   ├── package.json
+│   └── README.md
 ```
 
 ---
