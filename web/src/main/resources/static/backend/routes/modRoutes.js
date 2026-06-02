@@ -63,18 +63,43 @@ module.exports = function(app, db) {
     );
   });
 
-  app.delete("/threads/:id", (req, res) => {
-    const { deleted_by } = req.body;
-    db.query(
-      "UPDATE threads SET is_deleted=1, deleted_by=?, deleted_at=NOW() WHERE thread_id=?",
-      [deleted_by || null, req.params.id],
-      (err) => {
-        if (err) return res.status(500).send(err);
-        res.json({ message: "Thread deleted successfully." });
-      }
-    );
-  });
+  // app.delete("/threads/:id", (req, res) => {
+  //   const { deleted_by } = req.body;
+  //   db.query(
+  //     "UPDATE threads SET is_deleted=1, deleted_by=?, deleted_at=NOW() WHERE thread_id=?",
+  //     [deleted_by || null, req.params.id],
+  //     (err) => {
+  //       if (err) return res.status(500).send(err);
+  //       res.json({ message: "Thread deleted successfully." });
+  //     }
+  //   );
+  // });
 
+  // XÓA THREAD VÀ TOÀN BỘ TIN NHẮN (Sử dụng Soft Delete an toàn)
+  app.delete("/threads/:id", (req, res) => {
+    const threadId = req.params.id;
+    const { deleted_by } = req.body;
+
+    // Bước 1: Ẩn Thread (Cập nhật is_deleted = 1)
+    const sqlThread = "UPDATE threads SET is_deleted=1, deleted_by=?, deleted_at=NOW() WHERE thread_id=?";
+    db.query(sqlThread, [deleted_by || null, threadId], (err) => {
+        if (err) {
+            console.error("Lỗi xóa luồng gốc:", err);
+            return res.status(500).json({ error: "Lỗi Database: Không thể xóa Thread" });
+        }
+
+        // Bước 2: Ẩn TOÀN BỘ tin nhắn thuộc về Thread này (Cascade Soft Delete)
+        const sqlMessages = "UPDATE messages SET is_deleted=1 WHERE thread_id=?";
+        db.query(sqlMessages, [threadId], (err2) => {
+            if (err2) {
+                console.error("Lỗi xóa tin nhắn trong luồng:", err2);
+                return res.status(500).json({ error: "Lỗi Database: Không thể dọn sạch tin nhắn" });
+            }
+            res.json({ message: "Đã xóa Thread và ẩn toàn bộ tin nhắn bên trong thành công!" });
+        });
+    });
+  });
+  
   app.put("/threads/:id/lock", (req, res) => {
     const { is_locked } = req.body;
     db.query("UPDATE threads SET is_locked=? WHERE thread_id=?", [is_locked, req.params.id], (err) => {
