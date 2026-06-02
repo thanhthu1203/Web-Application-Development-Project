@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Threads — Forum HCMIU</title>
   <link rel="stylesheet" href="../user/css/user.css"/>
-  <link rel="stylesheet" href="../css/theme.css">
+ <link rel="stylesheet" href="../user/css/user_thread.css"/>
+ <link rel="stylesheet" href="../css/theme.css">
+
+
 </head>
 <body>
 
@@ -52,6 +55,26 @@
         <div class="page-title">Threads</div>
         <div class="page-desc">List of discussion threads</div>
         <div class="perm-banner user">ℹ️ You are <strong>User</strong> — read posts, create posts, subscribe to threads.</div>
+
+        <!-- Search & Filter Bar -->
+        <div class="search-bar-wrap">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="searchInput"
+              class="search-input"
+              placeholder="Search threads… e.g. quân sự, thể thao"
+              autocomplete="off"
+            />
+            <button class="search-clear" id="searchClear" title="Clear">✕</button>
+          </div>
+          <select id="categoryFilter" class="category-select">
+            <option value="">All categories</option>
+          </select>
+        </div>
+
+        <div id="searchStatus" class="search-status"></div>
         <div id="threadsList"></div>
       </div>
     </main>
