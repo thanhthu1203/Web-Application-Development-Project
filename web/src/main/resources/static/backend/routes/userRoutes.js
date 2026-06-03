@@ -521,12 +521,14 @@ module.exports = function(app, db) {
   // messages - GET
   
   // Lấy danh sách tin nhắn cùng với thông tin người đăng (hỗ trợ cả AppUsers, Moderators, Admins)
-  app.get("/messages", (req, res) => {
+  // Lấy message, bỏ qua message thuộc thread đã bị xóa
+app.get("/messages", (req, res) => {
     const sql = `
       SELECT m.*,
              COALESCE(u.username, mod_u.username, adm.username, CONCAT(u.first_name, ' ', u.last_name), mod_u.mod_name, adm.admin_name) AS author_name,
              COALESCE(u.avatar, mod_u.avatar, adm.avatar) AS author_avatar
       FROM messages m
+      INNER JOIN threads t ON m.thread_id = t.thread_id AND t.is_deleted = 0
       LEFT JOIN appusers u ON m.user_id = u.user_id
       LEFT JOIN moderators mod_u ON m.user_id = mod_u.mod_id
       LEFT JOIN admins adm ON m.user_id = adm.admin_id

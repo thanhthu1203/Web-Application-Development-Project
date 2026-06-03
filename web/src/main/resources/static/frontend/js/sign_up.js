@@ -127,6 +127,7 @@ document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
         username,
         email,
         password,
+        confirmPassword: confirmPw,
         first_name:    first,
         last_name:     last,
         gender:        gender || null,

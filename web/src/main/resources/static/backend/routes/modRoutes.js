@@ -75,30 +75,31 @@ module.exports = function(app, db) {
   //   );
   // });
 
-  // XÓA THREAD VÀ TOÀN BỘ TIN NHẮN (Sử dụng Soft Delete an toàn)
-  app.delete("/threads/:id", (req, res) => {
-    const threadId = req.params.id;
+// Xóa thread và toàn bộ message bên trong
+app.delete("/threads/:id", (req, res) => {
     const { deleted_by } = req.body;
+    const threadId = req.params.id;
 
-    // Bước 1: Ẩn Thread (Cập nhật is_deleted = 1)
-    const sqlThread = "UPDATE threads SET is_deleted=1, deleted_by=?, deleted_at=NOW() WHERE thread_id=?";
-    db.query(sqlThread, [deleted_by || null, threadId], (err) => {
-        if (err) {
-            console.error("Lỗi xóa luồng gốc:", err);
-            return res.status(500).json({ error: "Lỗi Database: Không thể xóa Thread" });
-        }
+    // Bước 1: xóa mềm tất cả message thuộc thread này trước
+    db.query(
+      "UPDATE messages SET is_deleted = 1, deleted_at = NOW() WHERE thread_id = ? AND is_deleted = 0",
+      [threadId],
+      (errMsg) => {
+        if (errMsg) return res.status(500).send(errMsg);
 
-        // Bước 2: Ẩn TOÀN BỘ tin nhắn thuộc về Thread này (Cascade Soft Delete)
-        const sqlMessages = "UPDATE messages SET is_deleted=1 WHERE thread_id=?";
-        db.query(sqlMessages, [threadId], (err2) => {
-            if (err2) {
-                console.error("Lỗi xóa tin nhắn trong luồng:", err2);
-                return res.status(500).json({ error: "Lỗi Database: Không thể dọn sạch tin nhắn" });
-            }
-            res.json({ message: "Đã xóa Thread và ẩn toàn bộ tin nhắn bên trong thành công!" });
-        });
-    });
+        // Bước 2: sau đó mới xóa mềm chính thread
+        db.query(
+          "UPDATE threads SET is_deleted = 1, deleted_by = ?, deleted_at = NOW() WHERE thread_id = ?",
+          [deleted_by || null, threadId],
+          (err) => {
+            if (err) return res.status(500).send(err);
+            res.json({ message: "Thread deleted successfully." });
+          }
+        );
+      }
+    );
   });
+  
   
   app.put("/threads/:id/lock", (req, res) => {
     const { is_locked } = req.body;

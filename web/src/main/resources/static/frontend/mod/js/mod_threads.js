@@ -359,27 +359,45 @@ function populateThreads(threadsArray) {
     });
 }
 
-// FIX: Cập nhật hàm createThread để có thể chọn Category
 function createThread() {
     const title = prompt('Enter new thread title:');
     if (!title || !title.trim()) return;
 
-    // Hiển thị danh sách các Category để Mod nhập ID tương ứng thay vì gán cứng bằng 1
-    let catPromptText = "Lựa chọn danh mục (Nhập số ID tương ứng):\n";
-    CATEGORIES.forEach(c => {
-        catPromptText += `${c.category_id} : ${c.name}\n`;
-    });
-    const catStr = prompt(catPromptText, '1');
-    const catId = parseInt(catStr) || 1;
+    // Kiểm tra đã load categories chưa
+    if (!Array.isArray(CATEGORIES) || CATEGORIES.length === 0) {
+        showToast('⚠️ No categories available. Please refresh and try again.');
+        return;
+    }
+
+    // Hiển thị danh sách category để mod chọn
+    const catList = CATEGORIES.map(c => `${c.category_id}. ${c.name}`).join('\n');
+    const catInput = prompt(`Select a category:\n\n${catList}\n\nEnter the category number:`);
+
+    // Mod bấm Cancel
+    if (catInput === null) return;
+
+    const categoryId = parseInt(catInput);
+    const validCategory = CATEGORIES.find(c => c.category_id === categoryId);
+
+    if (!validCategory) {
+        showToast('⚠️ Invalid category. Thread was not created.');
+        return;
+    }
 
     fetch(`${API}/threads`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ title: title.trim(), category_id: catId, created_by: currentUserId }),
-    }).then(async () => {
-        showToast('Thread created successfully');
+        body: JSON.stringify({ title: title.trim(), category_id: categoryId, created_by: currentUserId }),
+    }).then(async (res) => {
+        if (!res || !res.ok) {
+            showToast('❌ Error creating thread');
+            return;
+        }
+        showToast('✓ Thread created');
         THREADS = await fetch(`${API}/threads`, { headers: getAuthHeaders() }).then(r => r.ok ? r.json() : []);
-        performSearch(); // Giữ nguyên bộ lọc đang có
+        populateThreads();
+    }).catch(() => {
+        showToast('❌ Cannot connect to server');
     });
 }
 
@@ -420,17 +438,17 @@ function deleteThread(tid) {
         if (!res.ok) {
             // Đọc lỗi từ backend và báo cho Mod
             const errorData = await res.json();
-            alert("Lỗi: " + (errorData.error || "Không thể xóa Thread"));
+            alert("Error: " + (errorData.error || "Cannot delete thread"));
             return;
         }
         
         // Nếu thành công thì tải lại danh sách
-        showToast('Đã xóa Thread và toàn bộ bài viết thành công!');
+        showToast('✓ Thread and all messages deleted successfully');
         THREADS = await fetch(`${API}/threads`, { headers: getAuthHeaders() }).then(r => r.ok ? r.json() : []);
         performSearch(); 
     }).catch(err => {
-        console.error("Lỗi mạng:", err);
-        alert("Lỗi mạng hoặc server không phản hồi!");
+        console.error("Connection error:", err);
+        alert("❌ Cannot connect to server");
     });
 }
 
